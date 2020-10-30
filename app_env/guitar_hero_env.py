@@ -30,5 +30,17 @@ class GuitarHeroEnv(gym.Env):
 		self.perfect_threshold = self.params["perfect_threshold"]
 		self.great_threshold = self.params["great_threshold"]
 		self.okay_threshold = self.params["okay_threshold"]
-
+		# self.max_threshold = 10 --> set the max number of misses
+		# possibly make max number of misses dependent on the level of difficulty the user is playing at 
+		
+	def step(self, action): 
+		# need to define misses and time 
+		
+		# done = bool(
+			# misses > self.max_threshold 
+			# or time > self.track_length
+		# )
+		
+		# if not done:
+		
 gh = GuitarHeroEnv()

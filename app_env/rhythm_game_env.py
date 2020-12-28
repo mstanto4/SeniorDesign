@@ -2,7 +2,7 @@ import gym
 import json
 import numpy as np
 
-class GuitarHeroEnv(gym.Env):
+class RhythmGameEnv(gym.Env):
 
 	params = { "track_length": 100,
 		"note_speed": 1,	# Track units per step.
@@ -55,4 +55,4 @@ class GuitarHeroEnv(gym.Env):
 		# if not done:
 		pass
 		
-gh = GuitarHeroEnv()
+gh = RhythmGameEnv()

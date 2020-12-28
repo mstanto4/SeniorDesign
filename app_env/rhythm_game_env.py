@@ -2,15 +2,35 @@ import gym
 import json
 import numpy as np
 
+class Measure:
+
+	def __init__(self, num_notes, note_array):
+		self.num_notes = num_notes
+
+		# Numpy array of arrays of bools.
+		self.notes = note_array
+
+
+# Create a list of measures for testing step function
+measure_list = []
+measure_list.append(Measure(4, np.tile(True, (4, 5))))
+
+measure2_notes = np.tile(False, (8, 5))
+
+for i in range(5):
+	measure2_notes[i][i] = True
+
+measure_list.append(Measure(8, measure2_notes))
+
+
 class RhythmGameEnv(gym.Env):
 
-	params = { "track_length": 100,
+	params = { "track_length": 192,
 		"note_speed": 1,	# Track units per step.
-		"perfect_threshold": 1,
-		"great_threshold": 5,
-		"okay_threshold": 8
+		"perfect_threshold": 5,
+		"great_threshold": 10,
+		"okay_threshold": 15
 	}
-
 
 	def __init__(self, params_file=None, song_file="default.txt"):
 
@@ -21,7 +41,7 @@ class RhythmGameEnv(gym.Env):
 
 		""" Code will go here that will load song_file and set parameters, etc.
 		    accordingly. We'll decide what that looks like once we've 
-		    pinned down a file format. Song file will set BPM"""
+		    pinned down a file format. Song file will set BPM(s)"""
 
 		# This won't work until we narrow down a file format, just writing what it may look like.
 		with open(song_file, "r") as file:
@@ -32,14 +52,12 @@ class RhythmGameEnv(gym.Env):
 		self.perfect_threshold = self.params["perfect_threshold"]
 		self.great_threshold = self.params["great_threshold"]
 		self.okay_threshold = self.params["okay_threshold"]
-
-		# Store all note distances for easy updating. Once a distance is negative, 
-		# it is no longer needed.
-		self.note_distances = np.array([self.track_length + (i * 10) for i in range(len(self.notes))])
-
-		# State consists of distance from closest note to end of track.
-		self.state = [self.notes[0], self.note_distances[0]]
+		self.dt = float(1 / 192)
+		self.num_steps = 0
+		
+		self.curr_measure = 0
 		self.curr_note = 0
+
 		# self.max_threshold = 10 --> set the max number of misses
 		# possibly make max number of misses dependent on the level of difficulty the user is playing at 
 
@@ -54,5 +72,6 @@ class RhythmGameEnv(gym.Env):
 		
 		# if not done:
 		pass
+
 		
-gh = RhythmGameEnv()
+rg = RhythmGameEnv()

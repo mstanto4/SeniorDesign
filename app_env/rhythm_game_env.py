@@ -76,41 +76,54 @@ class RhythmGameEnv(gym.Env):
 			# or time > self.track_length
 		# )
 
+		done = False
+
 		for i in range(len(self.visible_note_distances)):
 			self.visible_note_distances[i] -= self.note_speed
 		
 		# Release a note when appropriate. Measure divided into 192 steps, so release every 192 / n steps.
 		if self.num_steps % (192 / self.curr_num_notes) == 0:
-			self.visible_notes.append(measure_list[self.curr_measure].notes[self.curr_note])
-			self.visible_note_distances.append(self.track_length)
-			self.curr_note += 1
+
+			if self.curr_measure < len(measure_list):
+				self.visible_notes.append(measure_list[self.curr_measure].notes[self.curr_note])
+				self.visible_note_distances.append(self.track_length)
+				self.curr_note += 1
 
 		# Delete notes that are no longer visible.
-		if self.visible_note_distances[0] < 0:
+		if len(self.visible_notes) != 0 and self.visible_note_distances[0] < 0:
 			del self.visible_notes[0]
 			del self.visible_note_distances[0]
+
+		# Environment run ends when no more notes are visible and all measures have been exhausted.
+		if len(self.visible_notes) == 0 and self.curr_measure >= len(measure_list):
+			done = True
 
 		self.num_steps += 1
 
 		# Track beats for BPM changes and stops.
-		if self.num_steps % (192 / 4) == 0:
+		if (self.num_steps - 1) % (192 / 4) == 0 and self.num_steps != 1:
 			self.curr_beat += 1
 
-		# Got to next measure and reset notes.
-		if self.num_steps > 191:
-			self.num_steps = 0
-			
-			"""TODO: Ensure that script can still step without errors once measures have 
-			   been exhauseted. End condition should be empty visible_note list."""
-
+		# Got to next measure and reset note index.
+		if self.num_steps % 192 == 0:
 			self.curr_measure += 1
+
+			if self.curr_measure < len(measure_list):
+				self.curr_num_notes = measure_list[self.curr_measure].num_notes
 
 			self.curr_note = 0
 
-		print(self.visible_notes[0], self.visible_note_distances[0])
+		#if len(self.visible_notes) != 0:
+		#	print(self.visible_notes[0], self.visible_note_distances[0])
+
+		return done
 
 		
 rg = RhythmGameEnv()
+result = False
 
-while True:
-	rg.step(np.tile(False, (1, 5)))
+while not result:
+	result = rg.step(np.tile(False, (1, 5)))
+
+	if len(rg.visible_notes) != 0:
+		print(rg.visible_notes[0], rg.visible_note_distances[0], rg.num_steps, rg.curr_beat)

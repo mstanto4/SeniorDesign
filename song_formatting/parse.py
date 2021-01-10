@@ -18,6 +18,8 @@ for count,x in enumerate(songContents):
 			newSong.write(x)		
 		if(text[0] == "#SAMPLESTART" or text[0] == "#SAMPLELENGTH" or text[0] == "#BPMS"):
 			newSong.write(x)
+		if(text[0] == "#TITLE" or text[0] == "#STOPS" or text[0] == "#DISPLAYBPM"):
+			newSong.write(x)
 		if(text[0] == "#NOTES"):
 			newSong.write(x)
 			newSong.write(songContents[count + 3])

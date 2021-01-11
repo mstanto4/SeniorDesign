@@ -43,14 +43,14 @@ for count,x in enumerate(songContents):
 			temp = list(x)
 			temp[4] = '1'
 			x = ''.join(temp)
-			x = x + '\n'
+		#	x = x + '\n'
 #			print(x)
 			flag = 0
 		else:
 			temp = list(x)
 			temp[4] = '0'
 			x = ''.join(temp)
-			x = x + '\n'
+		#	x = x + '\n'
 #			print(x)
 		#print(x)
 		newSong.write(x)

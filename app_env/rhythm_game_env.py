@@ -82,7 +82,14 @@ class RhythmGameEnv(gym.Env):
 
 		# PSEUDOCODE 
 		# if button press/action correctly corresponds to the next visible note
-		if self.visible_notes[0] = action:
+		
+		# determine if button press/action is equla to the next visible note 
+		equal = True 
+		for i in self.visible_notes:
+			if self.visible_notes[i] != action[i]
+				equal = False
+		# if they are equal, determine point increase based on distance and threshold 
+		if equal == True: 
 			# falls under perfect threshold, add 3 points
 			if self.visible_note_distances[0] < self.perfect_threshold:
 				self.score += 3
@@ -95,7 +102,7 @@ class RhythmGameEnv(gym.Env):
 			# miss, deduct 1 point 
 			else:
 				self.score -= 1
-		# player missed, deduct point 
+		# player missed/no action, deduct point 
 		else:
 			self.score -= 1
 

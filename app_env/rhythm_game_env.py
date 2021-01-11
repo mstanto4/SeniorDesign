@@ -64,6 +64,8 @@ class RhythmGameEnv(gym.Env):
 		self.visible_notes = []
 		self.visible_note_distances = []
 
+		self.score = 0
+
 		# self.max_threshold = 10 --> set the max number of misses
 		# possibly make max number of misses dependent on the level of difficulty the user is playing at 
 
@@ -77,6 +79,25 @@ class RhythmGameEnv(gym.Env):
 		# )
 
 		done = False
+
+		# PSEUDOCODE 
+		# if button press/action correctly corresponds to the next visible note
+		if self.visible_notes[0] = action:
+			# falls under perfect threshold, add 3 points
+			if self.visible_note_distances[0] < self.perfect_threshold:
+				self.score += 3
+			# falls under great threshold, add 2 points
+			else if self.visible_note_distances[0] < self.great_threshold: 
+				self.score += 2
+			# falls under okay threshold, add 1 point
+			else if self.visible_note_distances[0] < self.okay_threshold: 
+				self.score += 1
+			# miss, deduct 1 point 
+			else:
+				self.score -= 1
+		# player missed, deduct point 
+		else:
+			self.score -= 1
 
 		for i in range(len(self.visible_note_distances)):
 			self.visible_note_distances[i] -= self.note_speed
@@ -104,7 +125,7 @@ class RhythmGameEnv(gym.Env):
 		if (self.num_steps - 1) % (192 / 4) == 0 and self.num_steps != 1:
 			self.curr_beat += 1
 
-		# Got to next measure and reset note index.
+		# Go to next measure and reset note index.
 		if self.num_steps % 192 == 0:
 			self.curr_measure += 1
 

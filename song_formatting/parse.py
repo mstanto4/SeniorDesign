@@ -27,12 +27,12 @@ for count,x in enumerate(songContents):
 		newSong.write(x)	
 	elif(x[0] == '/' and x[1] == '/'):
 		newSong.write(x)
-	elif(x[0] == '0' or x[0] == '1' or x[0] == '2' or x[0] == '3'):
+	elif(x[0] == '0' or x[0] == '1' or x[0] == '2' or x[0] == '3' or x[0] == '4'):
 		ones = 0
 		for index, y in enumerate(x):
 			if(y == '1'):
 				ones = ones + 1
-			if(y == '2' or y == '3'):
+			if(y == '2' or y == '3' or y == '4'):
 				temp = list(x)
 				temp[index] = '1'
 				x = ''.join(temp)
@@ -43,14 +43,14 @@ for count,x in enumerate(songContents):
 			temp = list(x)
 			temp[4] = '1'
 			x = ''.join(temp)
-		#	x = x + '\n'
+			x = x + '\n'
 #			print(x)
 			flag = 0
 		else:
 			temp = list(x)
 			temp[4] = '0'
 			x = ''.join(temp)
-		#	x = x + '\n'
+			x = x + '\n'
 #			print(x)
 		#print(x)
 		newSong.write(x)

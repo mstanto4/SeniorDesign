@@ -1,6 +1,7 @@
 import gym
 import json
 import numpy as np
+import sys
 
 class Measure:
 
@@ -32,7 +33,7 @@ class RhythmGameEnv(gym.Env):
 		"okay_threshold": 15
 	}
 
-	def __init__(self, params_file=None, song_file="default.txt"):
+	def __init__(self, params_file=None, song_file=sys.argv[1]):
 
 		if params_file != None:
 

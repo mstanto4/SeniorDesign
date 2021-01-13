@@ -26,7 +26,7 @@ measure_list.append(Measure(8, measure2_notes))
 class RhythmGameEnv(gym.Env):
 
 	params = { "track_length": 192,
-		"note_speed": 4,	# Track units per step.
+		"note_speed": 16,	# Track units per step.
 		"perfect_threshold": 5,
 		"great_threshold": 10,
 		"okay_threshold": 15
@@ -53,13 +53,16 @@ class RhythmGameEnv(gym.Env):
 		self.great_threshold = self.params["great_threshold"]
 		self.okay_threshold = self.params["okay_threshold"]
 
-		self.dt = float(1 / 192)
+		self.dt = 1.0 / 60
 		self.num_steps = 0
 		self.curr_beat = 0
+		self.curr_bpm = 120
 		
 		self.curr_measure = 0
 		self.curr_num_notes = measure_list[self.curr_measure].num_notes
 		self.curr_note = 0
+		self.curr_release_interval = 240 / (self.curr_bpm * self.curr_num_notes * self.dt)
+		self.curr_note_spacing = self.note_speed * self.curr_release_interval
 
 		self.visible_notes = []
 		self.visible_note_distances = []
@@ -106,11 +109,15 @@ class RhythmGameEnv(gym.Env):
 		else:
 			self.score -= 1
 
+
 		for i in range(len(self.visible_note_distances)):
 			self.visible_note_distances[i] -= self.note_speed
 		
-		# Release a note when appropriate. Measure divided into 192 steps, so release every 192 / n steps.
-		if self.num_steps % (192 / self.curr_num_notes) == 0:
+		# Release note after appropriate amount of time.
+		note_pos = self.track_length + (self.curr_note_spacing * self.curr_note)
+			- (self.note_speed * self.num_steps)
+
+		if note_pos <= self.track_length:
 
 			if self.curr_measure < len(measure_list):
 				self.visible_notes.append(measure_list[self.curr_measure].notes[self.curr_note])

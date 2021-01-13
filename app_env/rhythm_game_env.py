@@ -26,7 +26,7 @@ measure_list.append(Measure(8, measure2_notes))
 class RhythmGameEnv(gym.Env):
 
 	params = { "track_length": 192,
-		"note_speed": 16,	# Track units per step.
+		"note_speed": 4,	# Track units per step.
 		"perfect_threshold": 5,
 		"great_threshold": 10,
 		"okay_threshold": 15
@@ -55,15 +55,15 @@ class RhythmGameEnv(gym.Env):
 
 		self.dt = 1.0 / 60
 		self.num_steps = 0
+		self.measure_steps = 0
 		self.curr_beat = 0
 		self.curr_bpm = 120
 		
 		self.curr_measure = 0
 		self.curr_num_notes = measure_list[self.curr_measure].num_notes
 		self.curr_note = 0
-		self.overall_note = 0
-		self.curr_release_interval = 240 / (self.curr_bpm * self.curr_num_notes * self.dt)
-		self.curr_note_spacing = self.note_speed * self.curr_release_interval
+		# self.curr_release_interval = 240 / (self.curr_bpm * self.curr_num_notes * self.dt)
+		self.curr_note_spacing = self.note_speed * 240 / (self.curr_bpm * self.curr_num_notes * self.dt)
 
 		self.visible_notes = []
 		self.visible_note_distances = []
@@ -89,6 +89,7 @@ class RhythmGameEnv(gym.Env):
 		
 		# determine if button press/action is equla to the next visible note 
 		equal = True 
+		
 		for i in self.visible_notes:
 			if self.visible_notes[i] != action[i]:
 				equal = False
@@ -113,16 +114,6 @@ class RhythmGameEnv(gym.Env):
 
 		for i in range(len(self.visible_note_distances)):
 			self.visible_note_distances[i] -= self.note_speed
-		
-		note_pos = self.track_length + (self.curr_note_spacing * self.overall_note) - (self.note_speed * self.num_steps)
-
-		if note_pos <= self.track_length:
-
-			if self.curr_measure < len(measure_list):
-				self.visible_notes.append(measure_list[self.curr_measure].notes[self.curr_note])
-				self.visible_note_distances.append(note_pos)
-				self.overall_note += 1
-				self.curr_note += 1
 
 		# Delete notes that are no longer visible.
 		if len(self.visible_notes) != 0 and self.visible_note_distances[0] < 0:
@@ -136,18 +127,28 @@ class RhythmGameEnv(gym.Env):
 		# Track beats for BPM changes and stops.
 		self.curr_beat = int(self.num_steps * self.dt * self.curr_bpm / 60)
 
-		# Go to next measure and reset note index.
-		if self.num_steps % 192 == 0:
-			self.curr_measure += 1
+		note_pos = self.track_length + (self.curr_note_spacing * self.curr_note) - (self.note_speed * self.measure_steps)
+
+		self.num_steps += 1
+		self.measure_steps += 1
+
+		if note_pos <= self.track_length:
+
+			# Add note and current position if visible on track.
+			if self.curr_measure < len(measure_list):
+				self.visible_notes.append(measure_list[self.curr_measure].notes[self.curr_note])
+				self.visible_note_distances.append(note_pos)
+				self.curr_note += 1
+
+			# Determine if measure exhausted. Reset params.
+			if self.curr_note >= self.curr_num_notes:
+				self.curr_measure += 1
+				self.curr_note = 0
+				self.measure_steps = 0
 
 			if self.curr_measure < len(measure_list):
 				self.curr_num_notes = measure_list[self.curr_measure].num_notes
-
-			self.curr_note = 0
-
-		#if len(self.visible_notes) != 0:
-		#	print(self.visible_notes[0], self.visible_note_distances[0])
-		self.num_steps += 1
+				self.curr_note_spacing = self.note_speed * 240 / (self.curr_bpm * self.curr_num_notes * self.dt)
 
 		return done
 
@@ -159,4 +160,6 @@ while not result:
 	result = rg.step(np.tile(False, (1, 5)))
 
 	if len(rg.visible_notes) != 0:
-		print(rg.visible_notes[0], rg.visible_note_distances[0], rg.num_steps, rg.curr_beat)
+		print(rg.visible_notes[0], rg.visible_note_distances[0], rg.curr_note_spacing, rg.num_steps, rg.curr_beat)
+
+		#print(rg.visible_note_distances)

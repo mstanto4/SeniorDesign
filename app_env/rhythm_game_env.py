@@ -61,6 +61,7 @@ class RhythmGameEnv(gym.Env):
 		self.curr_measure = 0
 		self.curr_num_notes = measure_list[self.curr_measure].num_notes
 		self.curr_note = 0
+		self.overall_note = 0
 		self.curr_release_interval = 240 / (self.curr_bpm * self.curr_num_notes * self.dt)
 		self.curr_note_spacing = self.note_speed * self.curr_release_interval
 
@@ -89,7 +90,7 @@ class RhythmGameEnv(gym.Env):
 		# determine if button press/action is equla to the next visible note 
 		equal = True 
 		for i in self.visible_notes:
-			if self.visible_notes[i] != action[i]
+			if self.visible_notes[i] != action[i]:
 				equal = False
 		# if they are equal, determine point increase based on distance and threshold 
 		if equal == True: 
@@ -97,10 +98,10 @@ class RhythmGameEnv(gym.Env):
 			if self.visible_note_distances[0] < self.perfect_threshold:
 				self.score += 3
 			# falls under great threshold, add 2 points
-			else if self.visible_note_distances[0] < self.great_threshold: 
+			elif self.visible_note_distances[0] < self.great_threshold: 
 				self.score += 2
 			# falls under okay threshold, add 1 point
-			else if self.visible_note_distances[0] < self.okay_threshold: 
+			elif self.visible_note_distances[0] < self.okay_threshold: 
 				self.score += 1
 			# miss, deduct 1 point 
 			else:
@@ -113,15 +114,14 @@ class RhythmGameEnv(gym.Env):
 		for i in range(len(self.visible_note_distances)):
 			self.visible_note_distances[i] -= self.note_speed
 		
-		# Release note after appropriate amount of time.
-		note_pos = self.track_length + (self.curr_note_spacing * self.curr_note)
-			- (self.note_speed * self.num_steps)
+		note_pos = self.track_length + (self.curr_note_spacing * self.overall_note) - (self.note_speed * self.num_steps)
 
 		if note_pos <= self.track_length:
 
 			if self.curr_measure < len(measure_list):
 				self.visible_notes.append(measure_list[self.curr_measure].notes[self.curr_note])
-				self.visible_note_distances.append(self.track_length)
+				self.visible_note_distances.append(note_pos)
+				self.overall_note += 1
 				self.curr_note += 1
 
 		# Delete notes that are no longer visible.
@@ -133,11 +133,8 @@ class RhythmGameEnv(gym.Env):
 		if len(self.visible_notes) == 0 and self.curr_measure >= len(measure_list):
 			done = True
 
-		self.num_steps += 1
-
 		# Track beats for BPM changes and stops.
-		if (self.num_steps - 1) % (192 / 4) == 0 and self.num_steps != 1:
-			self.curr_beat += 1
+		self.curr_beat = int(self.num_steps * self.dt * self.curr_bpm / 60)
 
 		# Go to next measure and reset note index.
 		if self.num_steps % 192 == 0:
@@ -150,6 +147,7 @@ class RhythmGameEnv(gym.Env):
 
 		#if len(self.visible_notes) != 0:
 		#	print(self.visible_notes[0], self.visible_note_distances[0])
+		self.num_steps += 1
 
 		return done
 

@@ -204,8 +204,6 @@ class RhythmGameEnv(gym.Env):
 		self.visible_notes = []
 		self.visible_note_distances = []
 
-		self.score = 0
-
 		# self.max_threshold = 10 --> set the max number of misses
 		# possibly make max number of misses dependent on the level of difficulty the user is playing at 
 
@@ -219,33 +217,29 @@ class RhythmGameEnv(gym.Env):
 		# )
 
 		done = False
+		reward = 0
 
-		# PSEUDOCODE 
-		# if button press/action correctly corresponds to the next visible note
-		
-		# determine if button press/action is equla to the next visible note 
-		equal = True 
-		
-		for i in self.visible_notes:
-			if self.visible_notes[i] != action[i]:
-				equal = False
-		# if they are equal, determine point increase based on distance and threshold 
-		if equal == True: 
-			# falls under perfect threshold, add 3 points
+		if len(self.visible_notes) == 0:
+
+			if action != [False for x in range(5)]:
+				reward = -1
+
+		elif self.visible_notes[0] == action:
+
 			if self.visible_note_distances[0] < self.perfect_threshold:
-				self.score += 3
-			# falls under great threshold, add 2 points
+				reward = 3
+
 			elif self.visible_note_distances[0] < self.great_threshold: 
-				self.score += 2
-			# falls under okay threshold, add 1 point
+				reward = 2
+			
 			elif self.visible_note_distances[0] < self.okay_threshold: 
-				self.score += 1
-			# miss, deduct 1 point 
+				reward = 1
+			
 			else:
-				self.score -= 1
-		# player missed/no action, deduct point 
-		else:
-			self.score -= 1
+				reward = -1
+		 
+		elif self.visible_notes[0] != action:
+			reward = -1
 
 
 		for i in range(len(self.visible_note_distances)):
@@ -263,6 +257,7 @@ class RhythmGameEnv(gym.Env):
 		# Track beats for BPM changes and stops.
 		self.curr_beat = int(self.num_steps * self.dt * self.curr_bpm / 60)
 
+		# Track position of current note to determine when to make visible.
 		note_pos = self.track_length + (self.curr_note_spacing * self.curr_note) - (self.note_speed * self.measure_steps)
 
 		self.num_steps += 1
@@ -286,7 +281,15 @@ class RhythmGameEnv(gym.Env):
 				self.curr_num_notes = measure_list[self.curr_measure].num_notes
 				self.curr_note_spacing = self.note_speed * 240 / (self.curr_bpm * self.curr_num_notes * self.dt)
 
-		return done
+		if len(self.visible_notes == 0):
+			state = [[False for x in range(5)], 0]
+
+		else:
+			state = [self.visible_notes[0], self.visible_note_distances[0]]
+
+
+
+		return done, reward, state
 
 		
 rg = RhythmGameEnv()

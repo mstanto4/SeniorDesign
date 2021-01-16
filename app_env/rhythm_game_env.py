@@ -209,37 +209,36 @@ class RhythmGameEnv(gym.Env):
 
 		
 	def step(self, action): 
-		# need to define misses and time 
-		
-		# done = bool(
-			# misses > self.max_threshold 
-			# or time > self.track_length
-		# )
-
 		done = False
 		reward = 0
 
+		# No notes, and input is given.
 		if len(self.visible_notes) == 0:
 
 			if action != [False for x in range(5)]:
 				reward = -1
 
-		elif self.visible_notes[0] == action:
+		# Note is within scoring range.
+		elif self.visible_note_distances[0] <= self.okay_threshold:
 
-			if self.visible_note_distances[0] < self.perfect_threshold:
-				reward = 3
+			if self.visible_notes[0] == action:
 
-			elif self.visible_note_distances[0] < self.great_threshold: 
-				reward = 2
-			
-			elif self.visible_note_distances[0] < self.okay_threshold: 
-				reward = 1
-			
+				if self.visible_note_distances[0] <= self.perfect_threshold:
+					reward = 3
+
+				elif self.visible_note_distances[0] <= self.great_threshold: 
+					reward = 2
+				
+				elif self.visible_note_distances[0] <= self.okay_threshold: 
+					reward = 1
+
 			else:
 				reward = -1
-		 
-		elif self.visible_notes[0] != action:
-			reward = -1
+
+		else:
+
+			if action != [False for x in range(5)]:
+				reward = -1
 
 
 		for i in range(len(self.visible_note_distances)):

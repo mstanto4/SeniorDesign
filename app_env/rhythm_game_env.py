@@ -81,10 +81,13 @@ class RhythmGameEnv(gym.Env):
 						self.bpms[float(bpm_pair[0])] = float(bpm_pair[1])
 				elif(text2[0] == "#STOPS"):
 					temp = text2[1].split(',')
-					temp[len(temp)-1] = temp[len(temp)-1][:-2]
-					for i in range(len(temp)):
-						stop_pair = temp[i].split('=')
-						self.stops[float(stop_pair[0])] = float(stop_pair[1])		
+
+					if len(temp) > 1:
+						temp[len(temp)-1] = temp[len(temp)-1][:-2]
+						
+						for i in range(len(temp)):
+							stop_pair = temp[i].split('=')
+							self.stops[float(stop_pair[0])] = float(stop_pair[1])		
 			elif(x[0] == ','):
 				if(difficulty[len(difficulty)-1] == "Easy"):
 					easyMeasures.append(count)

@@ -30,6 +30,8 @@ class RhythmGameEnv(gym.Env):
 		# Maybe determine number of measures beforehand and initialize list with
 		# that many values. This could avoid pointer issues.
 		self.measure_list = []
+		self.bpms = {}
+		self.stops = {}
 
 		smm_file = open(song_file, "r")
 		lines = smm_file.readlines()
@@ -62,7 +64,26 @@ class RhythmGameEnv(gym.Env):
 					if(text2 == "Challenge:"):
 						difficulty.append("Challenge")
 						locNotes.append(count+2)
-			
+				text2 = x.split(':')
+				if(text2[0] == "#OFFSET"):
+					self.offset = float(text2[1])
+				elif(text2[0] == "#SAMPLESTART"):
+					self.sample_start = float(text2[1])
+				elif(text2[0] == "#SAMPLELENGTH"):
+					self.sample_start = float(text2[1])
+				elif(text2[0] == "#BPMS"):
+					temp = text2[1].split(',')
+					#remove ;
+					temp[len(temp)-1] = temp[len(temp)-1][:-2]
+					for i in range(len(temp)):
+						bpm_pair = temp[i].split('=')
+						self.bpms[float(bpm_pair[0])] = float(bpm_pair[1])
+				elif(text2[0] == "#STOPS"):
+					temp = text2[1].split(',')
+					temp[len(temp)-1] = temp[len(temp)-1][:-2]
+					for i in range(len(temp)):
+						stop_pair = temp[i].split('=')
+						self.stops[float(stop_pair[0])] = float(stop_pair[1])		
 			elif(x[0] == ','):
 				if(difficulty[len(difficulty)-1] == "Easy"):
 					easyMeasures.append(count)

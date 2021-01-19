@@ -84,7 +84,7 @@ class RhythmGameEnv(gym.Env):
 
 					if len(temp) > 1:
 						temp[len(temp)-1] = temp[len(temp)-1][:-2]
-						
+
 						for i in range(len(temp)):
 							stop_pair = temp[i].split('=')
 							self.stops[float(stop_pair[0])] = float(stop_pair[1])		
@@ -99,20 +99,20 @@ class RhythmGameEnv(gym.Env):
 					challengeMeasures.append(count)
 
 		#pick the correct set of measure locations for the difficulty
-		if(not(sys.argv[2] in difficulty)):
+		if(diff not in difficulty):
 			print("not valid difficulty")
 			quit()
 		else:
-			if(sys.argv[2] == "Easy"):
+			if(diff == "Easy"):
 				measureLocations = easyMeasures
-			elif(sys.argv[2] == "Medium"):
+			elif(diff == "Medium"):
 				measureLocations = mediumMeasures
-			elif(sys.argv[2] == "Hard"):
+			elif(diff == "Hard"):
 				measureLocations = hardMeasures
-			elif(sys.argv[2] == "Challenge"):
+			elif(diff == "Challenge"):
 				measureLocations = challengeMeasures		
 
-		position = difficulty.index(sys.argv[2])
+		position = difficulty.index(diff)
 		for j in range(len(measureLocations)+1):
 			if(j == 0):
 				numNotes = measureLocations[j] - locNotes[position]

@@ -241,15 +241,3 @@ class RhythmGameEnv(gym.Env):
 
 
 		return done, reward, state
-
-		
-rg = RhythmGameEnv()
-result = False
-
-while not result:
-	result = rg.step(np.tile(False, (1, 5)))
-
-	if len(rg.visible_notes) != 0:
-		print(rg.visible_notes[0], rg.visible_note_distances[0], rg.curr_note_spacing, rg.num_steps, rg.curr_beat)
-
-		#print(rg.visible_note_distances)

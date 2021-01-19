@@ -20,7 +20,7 @@ class RhythmGameEnv(gym.Env):
 		"okay_threshold": 15
 	}
 
-	def __init__(self, params_file=None, song_file=sys.argv[1], difficulty=sys.argv[2]):
+	def __init__(self, params_file=None, song_file="test.smm", diff="Easy"):
 
 		if params_file != None:
 
@@ -64,9 +64,9 @@ class RhythmGameEnv(gym.Env):
 					if(text2 == "Challenge:"):
 						difficulty.append("Challenge")
 						locNotes.append(count+2)
-				text2 = x.split(':')
+				text2 = x.strip().split(':')
 				if(text2[0] == "#OFFSET"):
-					self.offset = float(text2[1])
+					self.offset = float(text2[1][:-1])
 				elif(text2[0] == "#SAMPLESTART"):
 					self.sample_start = float(text2[1])
 				elif(text2[0] == "#SAMPLELENGTH"):
@@ -100,13 +100,13 @@ class RhythmGameEnv(gym.Env):
 			quit()
 		else:
 			if(sys.argv[2] == "Easy"):
-			measureLocations = easyMeasures
+				measureLocations = easyMeasures
 			elif(sys.argv[2] == "Medium"):
-			measureLocations = mediumMeasures
+				measureLocations = mediumMeasures
 			elif(sys.argv[2] == "Hard"):
-			measureLocations = hardMeasures
+				measureLocations = hardMeasures
 			elif(sys.argv[2] == "Challenge"):
-			measureLocations = challengeMeasures		
+				measureLocations = challengeMeasures		
 
 		position = difficulty.index(sys.argv[2])
 		for j in range(len(measureLocations)+1):

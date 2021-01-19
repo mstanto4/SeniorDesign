@@ -20,6 +20,8 @@ class RhythmGameEnv(gym.Env):
 		"okay_threshold": 15
 	}
 
+	empty_note = [False for x in range(5)]
+
 	def __init__(self, params_file=None, song_file="test.smm", diff="Easy"):
 
 		if params_file != None:
@@ -171,13 +173,16 @@ class RhythmGameEnv(gym.Env):
 		# No notes, and input is given.
 		if len(self.visible_notes) == 0:
 
-			if action != [False for x in range(5)]:
+			if action != self.empty_note:
 				reward = -1
 
 		# Note is within scoring range.
 		elif self.visible_note_distances[0] <= self.okay_threshold:
 
-			if self.visible_notes[0] == action:
+			if list(self.visible_notes[0]) == self.empty_note:
+				reward = 0
+
+			elif list(self.visible_notes[0]) == action:
 
 				if self.visible_note_distances[0] <= self.perfect_threshold:
 					reward = 3
@@ -193,7 +198,7 @@ class RhythmGameEnv(gym.Env):
 
 		else:
 
-			if action != [False for x in range(5)]:
+			if action != self.empty_note:
 				reward = -1
 
 
@@ -206,7 +211,7 @@ class RhythmGameEnv(gym.Env):
 			del self.visible_note_distances[0]
 
 		# Environment run ends when no more notes are visible and all measures have been exhausted.
-		if len(self.visible_notes) == 0 and self.curr_measure >= len(measure_list):
+		if len(self.visible_notes) == 0 and self.curr_measure >= len(self.measure_list):
 			done = True
 
 		# Track beats for BPM changes and stops.
@@ -236,8 +241,8 @@ class RhythmGameEnv(gym.Env):
 				self.curr_num_notes = self.measure_list[self.curr_measure].num_notes
 				self.curr_note_spacing = self.note_speed * 240 / (self.curr_bpm * self.curr_num_notes * self.dt)
 
-		if len(self.visible_notes == 0):
-			state = [[False for x in range(5)], 0]
+		if len(self.visible_notes) == 0:
+			state = [np.tile(False, (1, 5)), 0]
 
 		else:
 			state = [self.visible_notes[0], self.visible_note_distances[0]]

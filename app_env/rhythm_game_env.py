@@ -214,8 +214,14 @@ class RhythmGameEnv(gym.Env):
 		if len(self.visible_notes) == 0 and self.curr_measure >= len(self.measure_list):
 			done = True
 
+		if done:
+			return done, reward, [self.empty_note, 0]
+
 		# Track beats for BPM changes and stops.
 		self.curr_beat = int(self.num_steps * self.dt * self.curr_bpm / 60)
+		
+		if self.curr_beat in self.bpms:
+			self.curr_bpm = self.bpms[self.curr_beat]
 
 		# Track position of current note to determine when to make visible.
 		note_pos = self.track_length + (self.curr_note_spacing * self.curr_note) - (self.note_speed * self.measure_steps)
@@ -242,7 +248,7 @@ class RhythmGameEnv(gym.Env):
 				self.curr_note_spacing = self.note_speed * 240 / (self.curr_bpm * self.curr_num_notes * self.dt)
 
 		if len(self.visible_notes) == 0:
-			state = [np.tile(False, (1, 5)), 0]
+			state = [self.empty_note, 0]
 
 		else:
 			state = [self.visible_notes[0], self.visible_note_distances[0]]

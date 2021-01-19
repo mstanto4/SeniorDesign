@@ -29,10 +29,7 @@ class RhythmGameEnv(gym.Env):
 
 		# Maybe determine number of measures beforehand and initialize list with
 		# that many values. This could avoid pointer issues.
-		self.easy_array = []
-		self.medium_array = []
-		self.hard_array = []
-		self.challenge_array = []
+		self.measure_list = []
 
 		smm_file = open(song_file, "r")
 		lines = smm_file.readlines()
@@ -46,7 +43,7 @@ class RhythmGameEnv(gym.Env):
 		difficulty = []
 		#determines where the notes for each difficulty start
 		locNotes = []
-
+			
 		#read in measures and determine the location of the end of each measure and which difficulties are present in the file
 		for count, x in enumerate(lines):
 			if(x[0] == '#'):
@@ -54,134 +51,68 @@ class RhythmGameEnv(gym.Env):
 				if(text == "#NOTES:"):
 					text2 = lines[count+1].strip()
 					if(text2 == "Easy:"):
-						difficulty.append(1)
+						difficulty.append("Easy")
 						locNotes.append(count+2)
 					if(text2 == "Medium:"):
-						difficulty.append(2)
+						difficulty.append("Medium")
 						locNotes.append(count+2)
 					if(text2 == "Hard:"):
-						difficulty.append(3)
+						difficulty.append("Hard")
 						locNotes.append(count+2)
 					if(text2 == "Challenge:"):
-						difficulty.append(4)
+						difficulty.append("Challenge")
 						locNotes.append(count+2)
 			
 			elif(x[0] == ','):
-				if(difficulty[len(difficulty)-1] == 1):
+				if(difficulty[len(difficulty)-1] == "Easy"):
 					easyMeasures.append(count)
-				if(difficulty[len(difficulty)-1] == 2):
+				if(difficulty[len(difficulty)-1] == "Medium"):
 					mediumMeasures.append(count)
-				if(difficulty[len(difficulty)-1] == 3):
+				if(difficulty[len(difficulty)-1] == "Hard"):
 					hardMeasures.append(count)
-				if(difficulty[len(difficulty)-1] == 4):
+				if(difficulty[len(difficulty)-1] == "Challenge"):
 					challengeMeasures.append(count)
-		
-		#sets up the measure array for each difficulty present in the file
-		for i in range(len(difficulty)):
-			if(difficulty[i] == 1):
-				for j in range(len(easyMeasures)+1):
-					if(j == 0):
-						numNotes = easyMeasures[j] - locNotes[i]
-					elif(j == len(easyMeasures) and (i+1) < len(locNotes)):
-						numNotes = locNotes[i+1] - easyMeasures[j-1] - 5
-					elif(j == len(easyMeasures)):
-						numNotes = (len(lines) - 1) - easyMeasures[j-1]
+
+		#pick the correct set of measure locations for the difficulty
+		if(not(sys.argv[2] in difficulty)):
+			print("not valid difficulty")
+			quit()
+		else:
+			if(sys.argv[2] == "Easy"):
+			measureLocations = easyMeasures
+			elif(sys.argv[2] == "Medium"):
+			measureLocations = mediumMeasures
+			elif(sys.argv[2] == "Hard"):
+			measureLocations = hardMeasures
+			elif(sys.argv[2] == "Challenge"):
+			measureLocations = challengeMeasures		
+
+		position = difficulty.index(sys.argv[2])
+		for j in range(len(measureLocations)+1):
+			if(j == 0):
+				numNotes = measureLocations[j] - locNotes[position]
+			elif(j == len(measureLocations) and (position+1) < len(locNotes)):
+				numNotes = locNotes[position+1] - measureLocations[j-1] - 5
+			elif(j == len(measureLocations)):
+				numNotes = (len(lines) - 1) - measureLocations[j-1]
+			else:
+				numNotes = measureLocations[j] - measureLocations[j-1] - 1
+			if(numNotes % 4 != 0):
+				print(numNotes)
+				print("Error")
+				quit()
+			new_measure = Measure(numNotes, np.tile(False, (numNotes, 5)))
+			for k in range(0,numNotes):
+				if(j == 0):
+					temp = lines[locNotes[position]+k]
+				else:
+					temp = lines[measureLocations[j-1]+k+1]
+				for m in range(0,5):
+					if(temp[m] == '0'):
+						new_measure.notes[k][m] = False
 					else:
-						numNotes = easyMeasures[j] - easyMeasures[j-1] - 1
-					if(numNotes % 4 != 0):
-						print(numNotes)
-						print("Error")
-						quit()
-					new_measure = Measure(numNotes, np.tile(False, (numNotes, 5)))
-					for k in range(0,numNotes):
-						if(j == 0):
-							temp = lines[locNotes[i]+k]
-						else:
-							temp = lines[easyMeasures[j-1]+k+1]
-						for m in range(0,5):
-							if(temp[m] == '0'):
-								new_measure.notes[k][m] = False
-							else:
-								new_measure.notes[k][m] = True 	
-					self.easy_array.append(new_measure)
-			if(difficulty[i] == 2):
-				for j in range(len(mediumMeasures)+1):
-					if(j == 0):
-						numNotes = mediumMeasures[j] - locNotes[i]
-					elif(j == len(mediumMeasures) and (i+1) < len(locNotes)):
-						numNotes = locNotes[i+1] - mediumMeasures[j-1] - 5
-					elif(j == len(mediumMeasures)):
-						numNotes = (len(lines) - 1) - mediumMeasures[j-1]
-					else:
-						numNotes = mediumMeasures[j] - mediumMeasures[j-1] - 1
-					if(numNotes % 4 != 0):
-						print(numNotes)
-						print("Error")
-						quit()
-					new_measure = Measure(numNotes, np.tile(False, (numNotes, 5)))
-					for k in range(0,numNotes):
-						if(j == 0):
-							temp = lines[locNotes[i]+k]
-						else:
-							temp = lines[mediumMeasures[j-1]+k+1]
-						for m in range(0,5):
-							if(temp[m] == '0'):
-								new_measure.notes[k][m] = False
-							else:
-								new_measure.notes[k][m] = True 	
-					self.medium_array.append(new_measure)
-			if(difficulty[i] == 3):
-				for j in range(len(hardMeasures)+1):
-					if(j == 0):
-						numNotes = hardMeasures[j] - locNotes[i]
-					elif(j == len(hardMeasures) and (i+1) < len(locNotes)):
-						numNotes = locNotes[i+1] - hardMeasures[j-1] - 5
-					elif(j == len(hardMeasures)):
-						numNotes = (len(lines) - 1) - hardMeasures[j-1]
-					else:
-						numNotes = hardMeasures[j] - hardMeasures[j-1] - 1
-					if(numNotes % 4 != 0):
-						print(numNotes)
-						print("Error")
-						quit()
-					new_measure = Measure(numNotes, np.tile(False, (numNotes, 5)))
-					for k in range(0,numNotes):
-						if(j == 0):
-							temp = lines[locNotes[i]+k]
-						else:
-							temp = lines[hardMeasures[j-1]+k+1]
-						for m in range(0,5):
-							if(temp[m] == '0'):
-								new_measure.notes[k][m] = False
-							else:
-								new_measure.notes[k][m] = True 	
-					self.hard_array.append(new_measure)
-			if(difficulty[i] == 4):		
-				for j in range(len(challengeMeasures)+1):
-					if(j == 0):
-						numNotes = challengeMeasures[j] - locNotes[i]
-					elif(j == len(challengeMeasures) and (i+1) < len(locNotes)):
-						numNotes = locNotes[i+1] - challengeMeasures[j-1] - 5
-					elif(j == len(challengeMeasures)):
-						numNotes = (len(lines) - 1) - challengeMeasures[j-1]
-					else:
-						numNotes = challengeMeasures[j] - challengeMeasures[j-1] - 1
-					if(numNotes % 4 != 0):
-						print(numNotes)
-						print("Error")
-						quit()
-					new_measure = Measure(numNotes, np.tile(False, (numNotes, 5)))
-					for k in range(0,numNotes):
-						if(j == 0):
-							temp = lines[locNotes[i]+k]
-						else:
-							temp = lines[challengeMeasures[j-1]+k+1]
-						for m in range(0,5):
-							if(temp[m] == '0'):
-								new_measure.notes[k][m] = False
-							else:
-								new_measure.notes[k][m] = True	
-					self.challenge_array.append(new_measure)
+						new_measure.notes[k][m] = True
+			self.measure_list.append(new_measure)
 
 		self.track_length = self.params["track_length"]
 		self.note_speed = self.params["note_speed"]
@@ -196,7 +127,7 @@ class RhythmGameEnv(gym.Env):
 		self.curr_bpm = 120
 		
 		self.curr_measure = 0
-		self.curr_num_notes = measure_list[self.curr_measure].num_notes
+		self.curr_num_notes = self.measure_list[self.curr_measure].num_notes
 		self.curr_note = 0
 		# self.curr_release_interval = 240 / (self.curr_bpm * self.curr_num_notes * self.dt)
 		self.curr_note_spacing = self.note_speed * 240 / (self.curr_bpm * self.curr_num_notes * self.dt)
@@ -265,8 +196,8 @@ class RhythmGameEnv(gym.Env):
 		if note_pos <= self.track_length:
 
 			# Add note and current position if visible on track.
-			if self.curr_measure < len(measure_list):
-				self.visible_notes.append(measure_list[self.curr_measure].notes[self.curr_note])
+			if self.curr_measure < len(self.measure_list):
+				self.visible_notes.append(self.measure_list[self.curr_measure].notes[self.curr_note])
 				self.visible_note_distances.append(note_pos)
 				self.curr_note += 1
 
@@ -276,8 +207,8 @@ class RhythmGameEnv(gym.Env):
 				self.curr_note = 0
 				self.measure_steps = 0
 
-			if self.curr_measure < len(measure_list):
-				self.curr_num_notes = measure_list[self.curr_measure].num_notes
+			if self.curr_measure < len(self.measure_list):
+				self.curr_num_notes = self.measure_list[self.curr_measure].num_notes
 				self.curr_note_spacing = self.note_speed * 240 / (self.curr_bpm * self.curr_num_notes * self.dt)
 
 		if len(self.visible_notes == 0):

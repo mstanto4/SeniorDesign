@@ -20,7 +20,7 @@ class RhythmGameEnv(gym.Env):
 		"okay_threshold": 15
 	}
 
-	def __init__(self, params_file=None, song_file=sys.argv[1]):
+	def __init__(self, params_file=None, song_file=sys.argv[1], difficulty=sys.argv[2]):
 
 		if params_file != None:
 

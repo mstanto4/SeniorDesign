@@ -67,10 +67,11 @@ class RhythmGameEnv(gym.Env):
 				text2 = x.strip().split(':')
 				if(text2[0] == "#OFFSET"):
 					self.offset = float(text2[1][:-1])
-				elif(text2[0] == "#SAMPLESTART"):
-					self.sample_start = float(text2[1])
-				elif(text2[0] == "#SAMPLELENGTH"):
-					self.sample_start = float(text2[1])
+				# elif(text2[0] == "#SAMPLESTART"):
+				#	self.sample_start = float(text2[1])
+				# elif(text2[0] == "#SAMPLELENGTH"):
+				#	self.sample_start = float(text2[1])
+
 				elif(text2[0] == "#BPMS"):
 					temp = text2[1].split(',')
 					#remove ;

@@ -192,7 +192,7 @@ class RhythmGameEnv(gym.Env):
 		# Note is within scoring range.
 		elif self.visible_note_distances[0] <= self.okay_threshold:
 
-			if list(self.visible_notes[0]) == self.empty_note:
+			if action == self.empty_note:
 				reward = 0
 
 			elif list(self.visible_notes[0]) == action:

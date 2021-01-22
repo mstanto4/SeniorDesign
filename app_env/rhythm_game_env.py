@@ -32,7 +32,8 @@ class RhythmGameEnv(gym.Env):
 		# Maybe determine number of measures beforehand and initialize list with
 		# that many values. This could avoid pointer issues.
 		self.measure_list = []
-		self.bpms = {}
+		self.bpms = []
+		self.bpm_trans_points = []
 		self.stops = {}
 
 		smm_file = open(song_file, "r")
@@ -80,7 +81,9 @@ class RhythmGameEnv(gym.Env):
 					temp[len(temp)-1] = temp[len(temp)-1][:-2]
 					for i in range(len(temp)):
 						bpm_pair = temp[i].split('=')
-						self.bpms[float(bpm_pair[0])] = float(bpm_pair[1])
+						# self.bpms[float(bpm_pair[0])] = float(bpm_pair[1])
+						self.bpm_trans_points.append(float(bpm_pair[0]))
+						self.bpms.append(float((bpm_pair[1])))
 				elif(text2[0] == "#STOPS"):
 					temp = text2[1].split(',')
 
@@ -223,10 +226,11 @@ class RhythmGameEnv(gym.Env):
 			return done, reward, [self.empty_note, 0]
 
 		# Track beats for BPM changes and stops.
-		self.curr_beat = int(self.num_steps * self.dt * self.curr_bpm / 60.0)
+		self.curr_beat = self.calc_beat(self.num_steps)
+
 		
-		if self.curr_beat in self.bpms:
-			self.curr_bpm = self.bpms[self.curr_beat]
+		if self.curr_beat in self.bpm_trans_points:
+			self.curr_bpm = self.bpms[self.bpm_trans_points.index(self.curr_beat)]
 
 		# Track position of current note to determine when to make visible.
 		note_pos = self.track_length + (self.curr_note_spacing * self.curr_note) - (self.note_speed * self.measure_steps)
@@ -261,3 +265,11 @@ class RhythmGameEnv(gym.Env):
 
 
 		return done, reward, state
+
+
+	def calc_beat(self, curr_step):
+		prebeat = self.num_steps * self.dt * self.curr_bpm / 60.00
+
+		return int(prebeat)
+
+		

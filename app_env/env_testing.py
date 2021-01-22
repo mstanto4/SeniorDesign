@@ -23,6 +23,14 @@ while not done:
 	else:
 		action = blank_note
 
+	
+	print("Current beat:", rg.curr_beat)
+	print("Current measure:", rg.curr_measure)
+	print("Current BPM:", rg.curr_bpm)
+	print("Current step:", rg.num_steps)
+
 print("Total Score:", score)
 print("Done after", rg.num_steps, "steps.")
 print("Current beat:", rg.curr_beat)
+print("Current measure:", rg.curr_measure)
+print("Current note:", rg.curr_note)

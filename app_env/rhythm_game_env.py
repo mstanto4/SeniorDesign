@@ -14,7 +14,7 @@ class Measure:
 class RhythmGameEnv(gym.Env):
 
 	params = { "track_length": 192,
-		"note_speed": 4,	# Track units per step.
+		"note_speed": 1,	# Track units per step.
 		"perfect_threshold": 5,
 		"great_threshold": 10,
 		"okay_threshold": 15
@@ -115,6 +115,7 @@ class RhythmGameEnv(gym.Env):
 				measureLocations = challengeMeasures		
 
 		position = difficulty.index(diff)
+		print("Commas detected:", len(measureLocations))
 		for j in range(len(measureLocations)+1):
 			if(j == 0):
 				numNotes = measureLocations[j] - locNotes[position]
@@ -151,7 +152,7 @@ class RhythmGameEnv(gym.Env):
 		self.num_steps = 0
 		self.measure_steps = 0
 		self.curr_beat = 0
-		self.curr_bpm = 120
+		self.curr_bpm = self.bpms[0]
 		
 		self.curr_measure = 0
 		self.curr_num_notes = self.measure_list[self.curr_measure].num_notes
@@ -196,6 +197,10 @@ class RhythmGameEnv(gym.Env):
 			else:
 				reward = -1
 
+			if reward != 0:
+				del self.visible_notes[0]
+				del self.visible_note_distances[0]
+
 		else:
 
 			if action != self.empty_note:
@@ -218,7 +223,7 @@ class RhythmGameEnv(gym.Env):
 			return done, reward, [self.empty_note, 0]
 
 		# Track beats for BPM changes and stops.
-		self.curr_beat = int(self.num_steps * self.dt * self.curr_bpm / 60)
+		self.curr_beat = int(self.num_steps * self.dt * self.curr_bpm / 60.0)
 		
 		if self.curr_beat in self.bpms:
 			self.curr_bpm = self.bpms[self.curr_beat]
@@ -232,13 +237,13 @@ class RhythmGameEnv(gym.Env):
 		if note_pos <= self.track_length:
 
 			# Add note and current position if visible on track.
-			if self.curr_measure < len(self.measure_list):
+			if self.curr_measure < len(self.measure_list) and self.curr_note < self.curr_num_notes:
 				self.visible_notes.append(self.measure_list[self.curr_measure].notes[self.curr_note])
 				self.visible_note_distances.append(note_pos)
 				self.curr_note += 1
 
 			# Determine if measure exhausted. Reset params.
-			if self.curr_note >= self.curr_num_notes:
+			if self.curr_note >= self.curr_num_notes and self.curr_beat % 4 == 0:
 				self.curr_measure += 1
 				self.curr_note = 0
 				self.measure_steps = 0

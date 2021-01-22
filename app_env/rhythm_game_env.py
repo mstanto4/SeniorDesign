@@ -33,7 +33,7 @@ class RhythmGameEnv(gym.Env):
 		# that many values. This could avoid pointer issues.
 		self.measure_list = []
 		self.bpms = []
-		self.bpm_trans_points = []
+		self.bpm_beats = []
 		self.stops = {}
 
 		smm_file = open(song_file, "r")
@@ -82,7 +82,7 @@ class RhythmGameEnv(gym.Env):
 					for i in range(len(temp)):
 						bpm_pair = temp[i].split('=')
 						# self.bpms[float(bpm_pair[0])] = float(bpm_pair[1])
-						self.bpm_trans_points.append(float(bpm_pair[0]))
+						self.bpm_beats.append(float(bpm_pair[0]))
 						self.bpms.append(float((bpm_pair[1])))
 				elif(text2[0] == "#STOPS"):
 					temp = text2[1].split(',')
@@ -156,6 +156,15 @@ class RhythmGameEnv(gym.Env):
 		self.measure_steps = 0
 		self.curr_beat = 0
 		self.curr_bpm = self.bpms[0]
+		self.bpm_steps = [0]
+
+		for i in range(1, len(self.bpm_beats)):
+			# self.bpm_steps.append(self.bpm_beats[i] * self.dt * 60 / self.bpms[i])
+			self.bpm_steps.append(0)
+
+			for j in range(i):
+				self.bpm_steps[i] += int((self.bpm_beats[j + 1] - self.bpm_beats[j]) * 60.0 / (self.bpms[j] * self.dt))
+
 		
 		self.curr_measure = 0
 		self.curr_num_notes = self.measure_list[self.curr_measure].num_notes
@@ -228,9 +237,8 @@ class RhythmGameEnv(gym.Env):
 		# Track beats for BPM changes and stops.
 		self.curr_beat = self.calc_beat(self.num_steps)
 
-		
-		if self.curr_beat in self.bpm_trans_points:
-			self.curr_bpm = self.bpms[self.bpm_trans_points.index(self.curr_beat)]
+		if self.num_steps in self.bpm_steps:
+			self.curr_bpm = self.bpms[self.bpm_steps.index(self.num_steps)]
 
 		# Track position of current note to determine when to make visible.
 		note_pos = self.track_length + (self.curr_note_spacing * self.curr_note) - (self.note_speed * self.measure_steps)
@@ -268,8 +276,16 @@ class RhythmGameEnv(gym.Env):
 
 
 	def calc_beat(self, curr_step):
-		prebeat = self.num_steps * self.dt * self.curr_bpm / 60.00
+		
+		beat_calc = curr_step * self.dt * self.curr_bpm / 60.0
 
-		return int(prebeat)
+		# Stitch beats together like a piecewise function.
+		for i in range(1, len(self.bpm_steps)):
+
+			if curr_step >= self.bpm_steps[i]:
+
+				beat_calc += self.dt * self.bpm_steps[i] * (self.bpms[i - 1] - self.bpms[i]) / 60.0
+
+		return int(beat_calc)
 
 		

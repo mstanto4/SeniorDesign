@@ -78,7 +78,7 @@ class RhythmGameEnv(gym.Env):
 				elif(text2[0] == "#BPMS"):
 					temp = text2[1].split(',')
 					#remove ;
-					temp[len(temp)-1] = temp[len(temp)-1][:-2]
+					temp[len(temp)-1] = temp[len(temp)-1][:-1]
 					for i in range(len(temp)):
 						bpm_pair = temp[i].split('=')
 						# self.bpms[float(bpm_pair[0])] = float(bpm_pair[1])
@@ -88,7 +88,7 @@ class RhythmGameEnv(gym.Env):
 					temp = text2[1].split(',')
 
 					if len(temp) > 1:
-						temp[len(temp)-1] = temp[len(temp)-1][:-2]
+						temp[len(temp)-1] = temp[len(temp)-1][:-1]
 
 						for i in range(len(temp)):
 							stop_pair = temp[i].split('=')
@@ -118,7 +118,6 @@ class RhythmGameEnv(gym.Env):
 				measureLocations = challengeMeasures		
 
 		position = difficulty.index(diff)
-		print("Commas detected:", len(measureLocations))
 		for j in range(len(measureLocations)+1):
 			if(j == 0):
 				numNotes = measureLocations[j] - locNotes[position]
@@ -157,6 +156,10 @@ class RhythmGameEnv(gym.Env):
 		self.curr_beat = 0
 		self.curr_bpm = self.bpms[0]
 		self.bpm_steps = [0]
+
+		# Convert stop durations to steps from seconds.
+		for stop in self.stops:
+			self.stops[stop] *= 60
 
 		for i in range(1, len(self.bpm_beats)):
 			# self.bpm_steps.append(self.bpm_beats[i] * self.dt * 60 / self.bpms[i])

@@ -1,4 +1,14 @@
+'''
+Title: button_func.py
+Date: January 28, 2021
+Written by: Samantha Zimmermann 
+Description: Definition of LED and button GPIO pin constants. Contains setup function, which configures RPi GPIO pins; read_button, which returns
+a list of 1s and 0s corresponding to if a player button has been pressed and flashes the player button's LED for the configured amount of time; and flash_led, 
+which takes a list of 1s and 0s, and flashes the corresponding neural network player LED for the configured amount of time; and cleanup, which simply calls
+the GPIO cleanup function.
+'''
 import RPi.GPIO as GPIO # Import RPi GPIO library
+from time import sleep  # Delay function
 
 # "Constants" holding pin numbers for player and network buttons
 LED_P_W = 17
@@ -19,92 +29,105 @@ LED_C_G = 13
 LED_C_Y = 19
 LED_C_R = 26
 
+# Button flash time (in seconds)
+FLASH_TIME = 0.5
+
 # Sets up RPi GPIOs and all above specified pins
 def setup():
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.Board)
 
     # Set up the direction and default values of pins
-    GPIO.setup(LED_P_W, GPIO.OUT, pull_up_down=GPIO_PUD_DOWN);
-    GPIO.setup(LED_P_B, GPIO.OUT, pull_up_down=GPIO_PUD_DOWN);
-    GPIO.setup(LED_P_G, GPIO.OUT, pull_up_down=GPIO_PUD_DOWN);
-    GPIO.setup(LED_P_Y, GPIO.OUT, pull_up_down=GPIO_PUD_DOWN);
-    GPIO.setup(LED_P_R, GPIO.OUT, pull_up_down=GPIO_PUD_DOWN);
 
-    GPIO.setup(LED_C_W, GPIO.OUT, pull_up_down=GPIO_PUD_DOWN);
-    GPIO.setup(LED_C_B, GPIO.OUT, pull_up_down=GPIO_PUD_DOWN);
-    GPIO.setup(LED_C_G, GPIO.OUT, pull_up_down=GPIO_PUD_DOWN);
-    GPIO.setup(LED_C_Y, GPIO.OUT, pull_up_down=GPIO_PUD_DOWN);
-    GPIO.setup(LED_C_R, GPIO.OUT, pull_up_down=GPIO_PUD_DOWN);
+    # Player
+    GPIO.setup(LED_P_W, GPIO.OUT)
+    GPIO.setup(LED_P_B, GPIO.OUT)
+    GPIO.setup(LED_P_G, GPIO.OUT)
+    GPIO.setup(LED_P_Y, GPIO.OUT)
+    GPIO.setup(LED_P_R, GPIO.OUT)
 
-    GPIO.setup(BUT_P_W, GPIO.IN, pull_up_down=GPIO_PUD_DOWN);
-    GPIO.setup(BUT_P_B, GPIO.IN, pull_up_down=GPIO_PUD_DOWN);
-    GPIO.setup(BUT_P_G, GPIO.IN, pull_up_down=GPIO_PUD_DOWN);
-    GPIO.setup(BUT_P_Y, GPIO.IN, pull_up_down=GPIO_PUD_DOWN);
-    GPIO.setup(BUT_P_R, GPIO.IN, pull_up_down=GPIO_PUD_DOWN);
+    GPIO.setup(BUT_P_W, GPIO.IN)
+    GPIO.setup(BUT_P_B, GPIO.IN)
+    GPIO.setup(BUT_P_G, GPIO.IN)
+    GPIO.setup(BUT_P_Y, GPIO.IN)
+    GPIO.setup(BUT_P_R, GPIO.IN)
+
+    # Neural network
+    GPIO.setup(LED_C_W, GPIO.OUT)
+    GPIO.setup(LED_C_B, GPIO.OUT)
+    GPIO.setup(LED_C_G, GPIO.OUT)
+    GPIO.setup(LED_C_Y, GPIO.OUT)
+    GPIO.setup(LED_C_R, GPIO.OUT)
 
 # Reads the status of the five input player buttons and returns the
 # result as a list of 1s and 0s. 1 means the button was pressed, 0
 # means the button was not pressed. This function also flashes the
 # LED of the corresponding button if the button was pressed.
-
-# FIXME: Not tested with all buttons.
 def read_button():
     # List holding what buttons are read to be high
     button_vals = [0,0,0,0,0]
 
-    if GPIO.input(BUT_P_W) == GPIO.HIGH:
-        print("White button was pushed!")
-        GPIO.output(LED_P_W, GPIO.HIGH);
-        time.sleep(1);
-        GPIO.output(LED_P_W, GPIO.LOW);
-        button_vals[0] = 1;
-    if GPIO.input(BUT_P_B) == GPIO.HIGH:
-        GPIO.output(LED_P_B, GPIO.HIGH);
-        time.sleep(1);
-        GPIO.output(LED_P_B, GPIO.LOW);
-        button_vals[1] = 1;
-    if GPIO.input(BUT_P_G) == GPIO.HIGH:
-        GPIO.output(LED_G_B, GPIO.HIGH);
-        time.sleep(1);
-        GPIO.output(LED_G_B, GPIO.LOW);
-        button_vals[2] = 1;
-    if GPIO.input(BUT_P_Y) == GPIO.HIGH:
-        GPIO.output(LED_G_Y, GPIO.HIGH);
-        time.sleep(1);
-        GPIO.output(LED_G_Y, GPIO.LOW);
-        button_vals[3] = 1;
-    if GPIO.input(BUT_P_R) == GPIO.HIGH:
-        GPIO.output(LED_G_R, GPIO.HIGH);
-        time.sleep(1);
-        GPIO.output(LED_G_R, GPIO.LOW);
-        button_vals[4] = 1;
+    # Button value is pulled LOW when pressed due to pull up resistor.
+    if GPIO.input(BUT_P_W) == GPIO.LOW:
+        GPIO.output(LED_P_W, GPIO.LOW)
+        sleep(FLASH_TIME)
+        GPIO.output(LED_P_W, GPIO.LOW)
+        button_vals[0] = 1
 
-    return button_vals;
+    if GPIO.input(BUT_P_B) == GPIO.LOW:
+        GPIO.output(LED_P_B, GPIO.HIGH)
+        sleep(FLASH_TIME)
+        GPIO.output(LED_P_B, GPIO.LOW)
+        button_vals[1] = 1
+
+    if GPIO.input(BUT_P_G) == GPIO.LOW:
+        GPIO.output(LED_G_B, GPIO.HIGH)
+        sleep(FLASH_TIME)
+        GPIO.output(LED_G_B, GPIO.LOW)
+        button_vals[2] = 1
+
+    if GPIO.input(BUT_P_Y) == GPIO.LOW:
+        GPIO.output(LED_G_Y, GPIO.HIGH)
+        sleep(FLASH_TIME)
+        GPIO.output(LED_G_Y, GPIO.LOW)
+        button_vals[3] = 1
+
+    if GPIO.input(BUT_P_R) == GPIO.LOW:
+        GPIO.output(LED_G_R, GPIO.HIGH)
+        sleep(FLASH_TIME)
+        GPIO.output(LED_G_R, GPIO.LOW)
+        button_vals[4] = 1
+
+    return button_vals
 
 # This function takes a list of 5 values of 0s or 1s, and flashes the
 # corresponding button for values of 1.
-
-# FIXME: Not tested with all buttons.
 def flash_led(buttons):
     if buttons[0] == 1:
-        GPIO.output(LED_C_W, GPIO.HIGH);
-        time.sleep(1);
-        GPIO.output(LED_C_W, GPIO.LOW);
+        GPIO.output(LED_C_W, GPIO.HIGH)
+        sleep(FLASH_TIME)
+        GPIO.output(LED_C_W, GPIO.LOW)
+
     if buttons[1] == 1:
-        GPIO.output(LED_C_B, GPIO.HIGH);
-        time.sleep(1);
-        GPIO.output(LED_C_B, GPIO.LOW);
+        GPIO.output(LED_C_B, GPIO.HIGH)
+        sleep(FLASH_TIME)
+        GPIO.output(LED_C_B, GPIO.LOW)
+
     if buttons[2] == 1:
-        GPIO.output(LED_C_G, GPIO.HIGH);
-        time.sleep(1);
-        GPIO.output(LED_C_G, GPIO.LOW);
+        GPIO.output(LED_C_G, GPIO.HIGH)
+        sleep(FLASH_TIME)
+        GPIO.output(LED_C_G, GPIO.LOW)
+
     if buttons[3] == 1:
-        GPIO.output(LED_C_Y, GPIO.HIGH);
-        time.sleep(1);
-        GPIO.output(LED_C_Y, GPIO.LOW);
+        GPIO.output(LED_C_Y, GPIO.HIGH)
+        sleep(FLASH_TIME)
+        GPIO.output(LED_C_Y, GPIO.LOW)
+
     if buttons[4] == 1:
-        GPIO.output(LED_C_R, GPIO.HIGH);
-        time.sleep(1);
-        GPIO.output(LED_C_R, GPIO.LOW);
+        GPIO.output(LED_C_R, GPIO.HIGH)
+        sleep(FLASH_TIME)
+        GPIO.output(LED_C_R, GPIO.LOW)
+
+def cleanup():
+    GPIO.cleanup()
 

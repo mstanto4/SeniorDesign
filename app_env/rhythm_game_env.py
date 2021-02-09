@@ -34,7 +34,8 @@ class RhythmGameEnv(gym.Env):
 		self.measure_list = []
 		self.bpms = []
 		self.bpm_beats = []
-		self.stops = {}
+		self.stop_beats = []
+		self.stop_durs = []
 
 		smm_file = open(song_file, "r")
 		lines = smm_file.readlines()
@@ -92,7 +93,9 @@ class RhythmGameEnv(gym.Env):
 
 						for i in range(len(temp)):
 							stop_pair = temp[i].split('=')
-							self.stops[float(stop_pair[0])] = float(stop_pair[1])		
+							self.stop_beats.append(float(stop_pair[0]))
+							self.stop_durs.append(float(stop_pair[1]) * 60.0)
+
 			elif(x[0] == ','):
 				if(difficulty[len(difficulty)-1] == "Easy"):
 					easyMeasures.append(count)
@@ -156,10 +159,7 @@ class RhythmGameEnv(gym.Env):
 		self.curr_beat = 0
 		self.curr_bpm = self.bpms[0]
 		self.bpm_steps = [0]
-
-		# Convert stop durations to steps from seconds.
-		for stop in self.stops:
-			self.stops[stop] *= 60
+		self.stop_steps = []
 
 		for i in range(1, len(self.bpm_beats)):
 			# self.bpm_steps.append(self.bpm_beats[i] * self.dt * 60 / self.bpms[i])
@@ -168,6 +168,25 @@ class RhythmGameEnv(gym.Env):
 			for j in range(i):
 				self.bpm_steps[i] += int((self.bpm_beats[j + 1] - self.bpm_beats[j]) * 60.0 / (self.bpms[j] * self.dt))
 
+		for i in range(len(self.stop_beats)):
+			self.stop_steps.append(0)
+			remains = self.stop_beats[i]
+
+			for j in range(len(self.bpm_beats)):
+
+				if self.stop_beats[i] >= self.bpm_beats[j]:
+					self.stop_steps[i] = self.bpm_steps[j]
+
+				else:
+					# Convert remaining beats to steps.
+					self.stop_steps[i] += ((self.stop_beats[i] - self.bpm_beats[j - 1]) / self.bpms[j - 1]) * 60 / self.dt
+					self.stop_steps[i] = int(self.stop_steps[i])
+
+					# Introduce delay to future bpm changes.
+					for k in range(len(self.bpm_steps)):
+
+						if self.bpm_steps[k] > self.stop_steps[i]:
+							self.bpm_steps[k] += self.stop_durs[i]
 		
 		self.curr_measure = 0
 		self.curr_num_notes = self.measure_list[self.curr_measure].num_notes
@@ -184,6 +203,7 @@ class RhythmGameEnv(gym.Env):
 		
 	def step(self, action): 
 		done = False
+		stopped = False
 		reward = 0
 
 		# No notes, and input is given.
@@ -242,6 +262,26 @@ class RhythmGameEnv(gym.Env):
 
 		if self.num_steps in self.bpm_steps:
 			self.curr_bpm = self.bpms[self.bpm_steps.index(self.num_steps)]
+
+		# Check if steps in stop interval.
+		for i in range(len(self.stop_steps)):
+
+			if self.num_steps >= self.stop_steps[i] and self.num_steps <= self.stop_steps[i] + self.stop_durs[i]:
+				stopped = True
+				break
+
+		# increment steps and return state
+		if stopped:
+			self.num_steps += 1
+
+			if len(self.visible_notes) == 0:
+				state = [self.empty_note, 0]
+
+			else:
+				state = [self.visible_notes[0], self.visible_note_distances[0]]
+
+			return done, reward, state
+
 
 		# Track position of current note to determine when to make visible.
 		note_pos = self.track_length + (self.curr_note_spacing * self.curr_note) - (self.note_speed * self.measure_steps)

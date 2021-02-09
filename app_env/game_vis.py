@@ -5,6 +5,7 @@ sys.path.append('/usr/local/lib/python3.9/site-packages')
 import rhythm_game_env
 import numpy as np
 import pyglet as pyg
+from pyglet.window import key
 
 class GameState():
 	def __init__(self):	
@@ -15,28 +16,14 @@ class GameState():
 		self.blank_note = [False for x in range(5)]
 		self.action = self.blank_note
 		self.rows_visible = 0
-
+	
 	def update(self, dt):
-		prev_state = self.state
+		print(keys)
+		print(self.action)
 		self.done, self.reward, self.state = rg.step(self.action)
 		self.score += self.reward
+		self.action = [False for x in range(5)]
 
-		if self.reward < 0:
-			print("Action:", self.action)
-			print("State:", prev_state)
-			print("Reward:", self.reward)
-
-			if self.action != list(prev_state[0]):
-				print("Mismatch detected.")
-
-			print()
-
-		if self.state[1] <= rg.perfect_threshold:
-			self.action = list(self.state[0])
-
-		else:
-			self.action = self.blank_note
-		
 		if(len(rg.visible_notes) > self.rows_visible):
 			self.rows_visible += 1
 			if(rg.visible_notes[len(rg.visible_notes)-1][0] == True):
@@ -84,30 +71,31 @@ class GameState():
 				five = 0
 				if(note == True):
 					if(which == 0):
-						notes1[one].y = 350 - (192 - rg.visible_note_distances[num]) 
+						notes1[one].y = 350 - 1.6*(192 - rg.visible_note_distances[num]) 
 						one += 1			
 					if(which == 1):
-						notes2[two].y = 350 - (192 - rg.visible_note_distances[num]) 
+						notes2[two].y = 350 - 1.6*(192 - rg.visible_note_distances[num]) 
 						two += 1			
 					if(which == 2):
-						notes3[three].y = 350 - (192 - rg.visible_note_distances[num]) 
+						notes3[three].y = 350 - 1.6*(192 - rg.visible_note_distances[num]) 
 						three += 1			
 					if(which == 3):
-						notes4[four].y = 350 - (192 - rg.visible_note_distances[num]) 
+						notes4[four].y = 350 - 1.6*(192 - rg.visible_note_distances[num]) 
 						four += 1			
 					if(which == 4):
-						notes5[five].y = 350 - (192 - rg.visible_note_distances[num]) 
+						notes5[five].y = 350 - 1.6*(192 - rg.visible_note_distances[num]) 
 						five += 1			
 	
-		print(rg.visible_notes)
-		print(len(rg.visible_notes))
-		print(self.rows_visible)
+	#	print(rg.visible_notes)
+	#	print(len(rg.visible_notes))
+	#	print(self.rows_visible)
+		print(self.score)
 
 pyg.resource.path = ['res','res/images','res/sounds','res/fonts']
 pyg.resource.reindex()
 
 #image height = 656 width = 1500
-image = pyg.resource.image('testBackground.jpg')
+image = pyg.resource.image('testBackground2.jpg')
 window = pyg.window.Window(width = image.width, height = image.height)
 
 def update(dt):
@@ -118,6 +106,36 @@ def on_draw():
 	window.clear()
 	image.blit(0,0)
 	note_batch.draw()
+
+@window.event
+def on_key_press(symbol, modifiers):
+	if(symbol == key.Z):
+		keys['z'] = True
+		game_state.action[0] = True
+	elif(symbol == key.X):
+		keys['x'] = True
+		game_state.action[1] = True
+	elif(symbol == key.C):
+		keys['c'] = True
+		game_state.action[2] = True
+	elif(symbol == key.V):
+		keys['v'] = True
+		game_state.action[3] = True
+	elif(symbol == key.B):
+		keys['b'] = True
+		game_state.action[4] = True
+@window.event
+def on_key_release(symbol,modifiers):
+	if(symbol == key.Z):
+		keys['z'] = False
+	elif(symbol == key.X):
+		keys['x'] = False
+	elif(symbol == key.C):
+		keys['c'] = False
+	elif(symbol == key.V):
+		keys['v'] = False
+	elif(symbol == key.B):
+		keys['b'] = False
 
 if __name__ == '__main__':
 	rg = rhythm_game_env.RhythmGameEnv(song_file=sys.argv[1], diff=sys.argv[2])
@@ -134,11 +152,18 @@ if __name__ == '__main__':
 	notes3 = []
 	notes4 = []
 	notes5 = []
-	
-	pyg.clock.schedule_interval(update, 1/240.0)
+		
+	keys = {}
+	keys['z'] = False
+	keys['x'] = False
+	keys['c'] = False
+	keys['v'] = False
+	keys['b'] = False	
+
+	pyg.clock.schedule_interval(update, 1/120.0)
 	pyg.app.run()
 
-
+	
 
 
 

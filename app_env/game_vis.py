@@ -14,6 +14,7 @@ class GameState():
 		self.state = []
 		self.blank_note = [False for x in range(5)]
 		self.action = self.blank_note
+		self.rows_visible = 0
 
 	def update(self, dt):
 		prev_state = self.state
@@ -35,8 +36,72 @@ class GameState():
 
 		else:
 			self.action = self.blank_note
+		
+		if(len(rg.visible_notes) > self.rows_visible):
+			self.rows_visible += 1
+			if(rg.visible_notes[len(rg.visible_notes)-1][0] == True):
+				notes1.append(pyg.sprite.Sprite(note_image, x = 290, y = 350, batch=note_batch))
+			if(rg.visible_notes[len(rg.visible_notes)-1][1] == True):
+				notes2.append(pyg.sprite.Sprite(note_image, x = 510, y = 350, batch=note_batch))
+			if(rg.visible_notes[len(rg.visible_notes)-1][2] == True):
+				notes3.append(pyg.sprite.Sprite(note_image, x = 700, y = 350, batch=note_batch))
+			if(rg.visible_notes[len(rg.visible_notes)-1][3] == True):
+				notes4.append(pyg.sprite.Sprite(note_image, x = 875, y = 350, batch=note_batch))
+			if(rg.visible_notes[len(rg.visible_notes)-1][4] == True):
+				notes5.append(pyg.sprite.Sprite(note_image, x = 1075, y = 350, batch=note_batch))
+		elif(len(rg.visible_notes) < self.rows_visible):
+			self.rows_visible -= 1	
+		
+		#delete notes
+		count = [0,0,0,0,0]
+		for num, row in enumerate(rg.visible_notes):
+			for which, note in enumerate(row):
+				if(note == True):
+					count[which] += 1
 
+		if(count[0] < len(notes1)):
+			notes1[0].delete()
+			del notes1[0]			
+		if(count[1] < len(notes2)):
+			notes2[0].delete()
+			del notes2[0]			
+		if(count[2] < len(notes3)):
+			notes3[0].delete()
+			del notes3[0]			
+		if(count[3] < len(notes4)):
+			notes4[0].delete()
+			del notes4[0]			
+		if(count[4] < len(notes5)):
+			notes5[0].delete()
+			del notes5[0]			
+	
+		for num, row in enumerate(rg.visible_notes):
+			for which, note in enumerate(row):
+				one = 0
+				two = 0
+				three = 0
+				four = 0
+				five = 0
+				if(note == True):
+					if(which == 0):
+						notes1[one].y = 350 - (192 - rg.visible_note_distances[num]) 
+						one += 1			
+					if(which == 1):
+						notes2[two].y = 350 - (192 - rg.visible_note_distances[num]) 
+						two += 1			
+					if(which == 2):
+						notes3[three].y = 350 - (192 - rg.visible_note_distances[num]) 
+						three += 1			
+					if(which == 3):
+						notes4[four].y = 350 - (192 - rg.visible_note_distances[num]) 
+						four += 1			
+					if(which == 4):
+						notes5[five].y = 350 - (192 - rg.visible_note_distances[num]) 
+						five += 1			
+	
 		print(rg.visible_notes)
+		print(len(rg.visible_notes))
+		print(self.rows_visible)
 
 pyg.resource.path = ['res','res/images','res/sounds','res/fonts']
 pyg.resource.reindex()
@@ -69,13 +134,8 @@ if __name__ == '__main__':
 	notes3 = []
 	notes4 = []
 	notes5 = []
-	notes1.append(pyg.sprite.Sprite(note_image, x = 290, y = 350, batch=note_batch))
-	notes2.append(pyg.sprite.Sprite(note_image, x = 510, y = 350, batch=note_batch))
-	notes3.append(pyg.sprite.Sprite(note_image, x = 700, y = 350, batch=note_batch))
-	notes4.append(pyg.sprite.Sprite(note_image, x = 875, y = 350, batch=note_batch))
-	notes5.append(pyg.sprite.Sprite(note_image, x = 1075, y = 350, batch=note_batch))
 	
-	pyg.clock.schedule_interval(update, 1/120.0)
+	pyg.clock.schedule_interval(update, 1/240.0)
 	pyg.app.run()
 
 

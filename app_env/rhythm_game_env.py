@@ -15,9 +15,9 @@ class RhythmGameEnv(gym.Env):
 
 	params = { "track_length": 192,
 		"note_speed": 1,	# Track units per step.
-		"perfect_threshold": 5,
-		"great_threshold": 10,
-		"okay_threshold": 15
+		"perfect_threshold": 10,
+		"great_threshold": 15,
+		"okay_threshold": 30
 	}
 
 	empty_note = [False for x in range(5)]
@@ -96,6 +96,10 @@ class RhythmGameEnv(gym.Env):
 							self.stop_beats.append(float(stop_pair[0]))
 							self.stop_durs.append(float(stop_pair[1]) * 60.0)
 
+				elif(text2[0] == "#TITLE"):
+					self.title = text2[1]
+				elif(text2[0] == "#MUSIC"):
+					self.music = text2[1]
 			elif(x[0] == ','):
 				if(difficulty[len(difficulty)-1] == "Easy"):
 					easyMeasures.append(count)

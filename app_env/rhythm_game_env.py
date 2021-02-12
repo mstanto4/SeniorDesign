@@ -98,8 +98,10 @@ class RhythmGameEnv(gym.Env):
 
 				elif(text2[0] == "#TITLE"):
 					self.title = text2[1]
+					self.title = self.title[:-1]
 				elif(text2[0] == "#MUSIC"):
 					self.music = text2[1]
+					self.music = self.music[:-1]
 			elif(x[0] == ','):
 				if(difficulty[len(difficulty)-1] == "Easy"):
 					easyMeasures.append(count)

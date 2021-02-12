@@ -104,9 +104,11 @@ pyg.resource.reindex()
 image = pyg.resource.image('testBackground2.jpg')
 window = pyg.window.Window(width = image.width, height = image.height)
 
-font.add_file('res/fonts/Haster.ttf')
-haster = font.load('Haster', 12)
+pyg.resource.add_font('Haster.ttf')
+haster = font.load('Haster')
 score = 0
+
+pyg.options['audio'] = ('openal', 'pulse', 'directsound', 'silent')
 
 @window.event
 def update(dt):
@@ -153,6 +155,8 @@ def on_key_release(symbol,modifiers):
 if __name__ == '__main__':
 	rg = rhythm_game_env.RhythmGameEnv(song_file=sys.argv[1], diff=sys.argv[2])
 	game_state = GameState()
+	print(rg.title)
+	print(rg.music)
 
 	pyg.resource.path = ['res','res/images','res/sounds','res/fonts']
 	pyg.resource.reindex()
@@ -173,6 +177,9 @@ if __name__ == '__main__':
 	keys['v'] = False
 	keys['b'] = False	
 
+	source = pyg.resource.media(rg.music)
+
+	source.play()
 	pyg.clock.schedule_interval(update, 1/120.0)
 	pyg.app.run()
 

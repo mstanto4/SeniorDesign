@@ -6,6 +6,7 @@ import rhythm_game_env
 import numpy as np
 import pyglet as pyg
 from pyglet.window import key
+from pyglet import font
 
 class GameState():
 	def __init__(self):	
@@ -18,12 +19,15 @@ class GameState():
 		self.rows_visible = 0
 	
 	def update(self, dt):
-		print(keys)
-		print(self.action)
+	#	print(keys)
+	#	print(self.action)
 		self.done, self.reward, self.state = rg.step(self.action)
 		self.score += self.reward
+		if(self.reward != 0):
+			print(self.score)
 		self.action = [False for x in range(5)]
 
+		#create new notes
 		if(len(rg.visible_notes) > self.rows_visible):
 			self.rows_visible += 1
 			if(rg.visible_notes[len(rg.visible_notes)-1][0] == True):
@@ -62,13 +66,14 @@ class GameState():
 			notes5[0].delete()
 			del notes5[0]			
 	
+		#move notes
+		one = 0
+		two = 0
+		three = 0
+		four = 0
+		five = 0
 		for num, row in enumerate(rg.visible_notes):
 			for which, note in enumerate(row):
-				one = 0
-				two = 0
-				three = 0
-				four = 0
-				five = 0
 				if(note == True):
 					if(which == 0):
 						notes1[one].y = 350 - 1.6*(192 - rg.visible_note_distances[num]) 
@@ -85,11 +90,12 @@ class GameState():
 					if(which == 4):
 						notes5[five].y = 350 - 1.6*(192 - rg.visible_note_distances[num]) 
 						five += 1			
-	
+		score = pyg.text.Label(text="Score:" + str(self.score), color = (255,255,255,255), font_name = haster, x = 1250, y = 550)	
+
 	#	print(rg.visible_notes)
 	#	print(len(rg.visible_notes))
 	#	print(self.rows_visible)
-		print(self.score)
+	#	print(self.score)
 
 pyg.resource.path = ['res','res/images','res/sounds','res/fonts']
 pyg.resource.reindex()
@@ -98,6 +104,11 @@ pyg.resource.reindex()
 image = pyg.resource.image('testBackground2.jpg')
 window = pyg.window.Window(width = image.width, height = image.height)
 
+font.add_file('res/fonts/Haster.ttf')
+haster = font.load('Haster', 12)
+score = 0
+
+@window.event
 def update(dt):
 	game_state.update(dt)
 
@@ -106,6 +117,8 @@ def on_draw():
 	window.clear()
 	image.blit(0,0)
 	note_batch.draw()
+	if(score != 0):
+		score.draw()
 
 @window.event
 def on_key_press(symbol, modifiers):

@@ -90,7 +90,7 @@ class GameState():
 					if(which == 4):
 						notes5[five].y = 350 - 1.7*(192 - rg.visible_note_distances[num]) 
 						five += 1			
-		score = pyg.text.Label(text="Score:" + str(self.score), color = (255,255,255,255), font_name = haster, x = 1250, y = 550)	
+#		score = pyg.text.Label(text="Score:" + str(self.score), color = (255,255,255,255), font_name = haster, x = 1250, y = 550)	
 
 	#	print(rg.visible_notes)
 	#	print(len(rg.visible_notes))
@@ -104,8 +104,8 @@ pyg.resource.reindex()
 image = pyg.resource.image('testBackground2.jpg')
 window = pyg.window.Window(width = image.width, height = image.height)
 
-pyg.resource.add_font('Haster.ttf')
-haster = font.load('Haster')
+#pyg.resource.add_font('Haster.ttf')
+#haster = font.load('Haster')
 score = 0
 
 pyg.options['audio'] = ('openal', 'pulse', 'directsound', 'silent')

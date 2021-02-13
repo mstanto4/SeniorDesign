@@ -76,19 +76,19 @@ class GameState():
 			for which, note in enumerate(row):
 				if(note == True):
 					if(which == 0):
-						notes1[one].y = 350 - 1.6*(192 - rg.visible_note_distances[num]) 
+						notes1[one].y = 350 - 1.7*(192 - rg.visible_note_distances[num]) 
 						one += 1			
 					if(which == 1):
-						notes2[two].y = 350 - 1.6*(192 - rg.visible_note_distances[num]) 
+						notes2[two].y = 350 - 1.7*(192 - rg.visible_note_distances[num]) 
 						two += 1			
 					if(which == 2):
-						notes3[three].y = 350 - 1.6*(192 - rg.visible_note_distances[num]) 
+						notes3[three].y = 350 - 1.7*(192 - rg.visible_note_distances[num]) 
 						three += 1			
 					if(which == 3):
-						notes4[four].y = 350 - 1.6*(192 - rg.visible_note_distances[num]) 
+						notes4[four].y = 350 - 1.7*(192 - rg.visible_note_distances[num]) 
 						four += 1			
 					if(which == 4):
-						notes5[five].y = 350 - 1.6*(192 - rg.visible_note_distances[num]) 
+						notes5[five].y = 350 - 1.7*(192 - rg.visible_note_distances[num]) 
 						five += 1			
 		score = pyg.text.Label(text="Score:" + str(self.score), color = (255,255,255,255), font_name = haster, x = 1250, y = 550)	
 
@@ -121,36 +121,56 @@ def on_draw():
 	note_batch.draw()
 	if(score != 0):
 		score.draw()
+	if(press[0] != 0):
+		press1.draw()
+	if(press[1] != 0):
+		press2.draw()
+	if(press[2] != 0):
+		press3.draw()
+	if(press[3] != 0):
+		press4.draw()
+	if(press[4] != 0):
+		press5.draw()
 
 @window.event
 def on_key_press(symbol, modifiers):
 	if(symbol == key.Z):
 		keys['z'] = True
 		game_state.action[0] = True
+		press[0] = 1
 	elif(symbol == key.X):
 		keys['x'] = True
 		game_state.action[1] = True
+		press[1] = 1
 	elif(symbol == key.C):
 		keys['c'] = True
 		game_state.action[2] = True
+		press[2] = 1
 	elif(symbol == key.V):
 		keys['v'] = True
 		game_state.action[3] = True
+		press[3] = 1
 	elif(symbol == key.B):
 		keys['b'] = True
 		game_state.action[4] = True
+		press[4] = 1
 @window.event
 def on_key_release(symbol,modifiers):
 	if(symbol == key.Z):
 		keys['z'] = False
+		press[0] = 0
 	elif(symbol == key.X):
 		keys['x'] = False
+		press[1] = 0
 	elif(symbol == key.C):
 		keys['c'] = False
+		press[2] = 0
 	elif(symbol == key.V):
 		keys['v'] = False
+		press[3] = 0
 	elif(symbol == key.B):
 		keys['b'] = False
+		press[4] = 0
 
 if __name__ == '__main__':
 	rg = rhythm_game_env.RhythmGameEnv(song_file=sys.argv[1], diff=sys.argv[2])
@@ -176,7 +196,18 @@ if __name__ == '__main__':
 	keys['c'] = False
 	keys['v'] = False
 	keys['b'] = False	
-
+	yellow_image = pyg.resource.image('yellow.png')
+	blue_image = pyg.resource.image('blue.png')
+	green_image = pyg.resource.image('green.png')
+	white_image = pyg.resource.image('white.png')
+	red_image = pyg.resource.image('red.png')
+	press = [0,0,0,0,0]
+	press1 = pyg.sprite.Sprite(red_image, x = 290, y = 24)
+	press2 = pyg.sprite.Sprite(yellow_image, x = 510, y = 24)
+	press3 = pyg.sprite.Sprite(green_image, x = 700, y = 24)
+	press4 = pyg.sprite.Sprite(blue_image, x = 875, y = 24)
+	press5 = pyg.sprite.Sprite(white_image, x = 1075, y = 24)
+	
 	source = pyg.resource.media(rg.music)
 
 	source.play()

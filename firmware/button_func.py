@@ -65,65 +65,65 @@ def setup():
 # LED of the corresponding button if the button was pressed.
 def read_button():
     # List holding what buttons are read to be high
-    button_vals = [0,0,0,0,0]
+    button_vals = [False,False,False,False,False]
 
     # Button value is pulled LOW when pressed due to pull up resistor.
     if GPIO.input(BUT_P_W) == GPIO.LOW:
         GPIO.output(LED_P_W, GPIO.LOW)
         sleep(FLASH_TIME)
         GPIO.output(LED_P_W, GPIO.LOW)
-        button_vals[0] = 1
+        button_vals[0] = True
 
     if GPIO.input(BUT_P_B) == GPIO.LOW:
         GPIO.output(LED_P_B, GPIO.HIGH)
         sleep(FLASH_TIME)
         GPIO.output(LED_P_B, GPIO.LOW)
-        button_vals[1] = 1
+        button_vals[1] = True
 
     if GPIO.input(BUT_P_G) == GPIO.LOW:
         GPIO.output(LED_G_B, GPIO.HIGH)
         sleep(FLASH_TIME)
         GPIO.output(LED_G_B, GPIO.LOW)
-        button_vals[2] = 1
+        button_vals[2] = True
 
     if GPIO.input(BUT_P_Y) == GPIO.LOW:
         GPIO.output(LED_G_Y, GPIO.HIGH)
         sleep(FLASH_TIME)
         GPIO.output(LED_G_Y, GPIO.LOW)
-        button_vals[3] = 1
+        button_vals[3] = True
 
     if GPIO.input(BUT_P_R) == GPIO.LOW:
         GPIO.output(LED_G_R, GPIO.HIGH)
         sleep(FLASH_TIME)
         GPIO.output(LED_G_R, GPIO.LOW)
-        button_vals[4] = 1
+        button_vals[4] = True
 
     return button_vals
 
 # This function takes a list of 5 values of 0s or 1s, and flashes the
 # corresponding button for values of 1.
 def flash_led(buttons):
-    if buttons[0] == 1:
+    if buttons[0] == True:
         GPIO.output(LED_C_W, GPIO.HIGH)
         sleep(FLASH_TIME)
         GPIO.output(LED_C_W, GPIO.LOW)
 
-    if buttons[1] == 1:
+    if buttons[1] == True:
         GPIO.output(LED_C_B, GPIO.HIGH)
         sleep(FLASH_TIME)
         GPIO.output(LED_C_B, GPIO.LOW)
 
-    if buttons[2] == 1:
+    if buttons[2] == True:
         GPIO.output(LED_C_G, GPIO.HIGH)
         sleep(FLASH_TIME)
         GPIO.output(LED_C_G, GPIO.LOW)
 
-    if buttons[3] == 1:
+    if buttons[3] == True:
         GPIO.output(LED_C_Y, GPIO.HIGH)
         sleep(FLASH_TIME)
         GPIO.output(LED_C_Y, GPIO.LOW)
 
-    if buttons[4] == 1:
+    if buttons[4] == True:
         GPIO.output(LED_C_R, GPIO.HIGH)
         sleep(FLASH_TIME)
         GPIO.output(LED_C_R, GPIO.LOW)

@@ -2,6 +2,7 @@
 import sys
 sys.path.append('/usr/local/lib/python3.9/site-packages')
 
+import ../firmware/button_func
 import rhythm_game_env
 import numpy as np
 import pyglet as pyg
@@ -21,6 +22,30 @@ class GameState():
 	def update(self, dt):
 	#	print(keys)
 	#	print(self.action)
+		#button stuff
+		self.action = read_button()
+		if(self.action[0] == True):
+			press[0] = 1;
+		else:
+			press[0] = 0;
+		if(self.action[1] == True):
+			press[1] = 1;
+		else:
+			press[1] = 0;
+		if(self.action[2] == True):
+			press[2] = 1;
+		else:
+			press[2] = 0;
+		if(self.action[3] == True):
+			press[3] = 1;
+		else:
+			press[3] = 0;
+		if(self.action[4] == True):
+			press[4] = 1;
+		else:
+			press[4] = 0;
+
+
 		self.done, self.reward, self.state = rg.step(self.action)
 		self.score += self.reward
 		if(self.reward != 0):
@@ -173,6 +198,9 @@ def on_key_release(symbol,modifiers):
 		press[4] = 0
 
 if __name__ == '__main__':
+	#setup buttons
+	setup()
+
 	rg = rhythm_game_env.RhythmGameEnv(song_file=sys.argv[1], diff=sys.argv[2])
 	game_state = GameState()
 	print(rg.title)

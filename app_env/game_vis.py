@@ -157,45 +157,45 @@ def on_draw():
 	if(press[4] != 0):
 		press5.draw()
 
-@window.event
-def on_key_press(symbol, modifiers):
-	if(symbol == key.Z):
-		keys['z'] = True
-		game_state.action[0] = True
-		press[0] = 1
-	elif(symbol == key.X):
-		keys['x'] = True
-		game_state.action[1] = True
-		press[1] = 1
-	elif(symbol == key.C):
-		keys['c'] = True
-		game_state.action[2] = True
-		press[2] = 1
-	elif(symbol == key.V):
-		keys['v'] = True
-		game_state.action[3] = True
-		press[3] = 1
-	elif(symbol == key.B):
-		keys['b'] = True
-		game_state.action[4] = True
-		press[4] = 1
-@window.event
-def on_key_release(symbol,modifiers):
-	if(symbol == key.Z):
-		keys['z'] = False
-		press[0] = 0
-	elif(symbol == key.X):
-		keys['x'] = False
-		press[1] = 0
-	elif(symbol == key.C):
-		keys['c'] = False
-		press[2] = 0
-	elif(symbol == key.V):
-		keys['v'] = False
-		press[3] = 0
-	elif(symbol == key.B):
-		keys['b'] = False
-		press[4] = 0
+#@window.event
+#def on_key_press(symbol, modifiers):
+#	if(symbol == key.Z):
+#		keys['z'] = True
+#		game_state.action[0] = True
+#		press[0] = 1
+#	elif(symbol == key.X):
+#		keys['x'] = True
+#		game_state.action[1] = True
+#		press[1] = 1
+#	elif(symbol == key.C):
+#		keys['c'] = True
+#		game_state.action[2] = True
+#		press[2] = 1
+#	elif(symbol == key.V):
+#		keys['v'] = True
+#		game_state.action[3] = True
+#		press[3] = 1
+#	elif(symbol == key.B):
+#		keys['b'] = True
+#		game_state.action[4] = True
+#		press[4] = 1
+#@window.event
+#def on_key_release(symbol,modifiers):
+#	if(symbol == key.Z):
+#		keys['z'] = False
+#		press[0] = 0
+#	elif(symbol == key.X):
+#		keys['x'] = False
+#		press[1] = 0
+#	elif(symbol == key.C):
+#		keys['c'] = False
+#		press[2] = 0
+#	elif(symbol == key.V):
+#		keys['v'] = False
+#		press[3] = 0
+#	elif(symbol == key.B):
+#		keys['b'] = False
+#		press[4] = 0
 
 if __name__ == '__main__':
 	#setup buttons

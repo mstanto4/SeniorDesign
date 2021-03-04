@@ -1,8 +1,9 @@
 #for including gym / probably wont need or will need to change on pi
 import sys
 sys.path.append('/usr/local/lib/python3.9/site-packages')
+sys.path.append('../firmware')
 
-import ../firmware/button_func
+import button_func
 import rhythm_game_env
 import numpy as np
 import pyglet as pyg

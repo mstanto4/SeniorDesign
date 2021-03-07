@@ -3,7 +3,7 @@ import sys
 sys.path.append('/usr/local/lib/python3.9/site-packages')
 sys.path.append('../firmware')
 
-import button_func
+import button_func as bf
 import rhythm_game_env
 import numpy as np
 import pyglet as pyg
@@ -24,7 +24,7 @@ class GameState():
 	#	print(keys)
 	#	print(self.action)
 		#button stuff
-		self.action = read_button()
+		self.action = bf.read_button()
 		if(self.action[0] == True):
 			press[0] = 1;
 		else:
@@ -200,7 +200,7 @@ def on_draw():
 
 if __name__ == '__main__':
 	#setup buttons
-	setup()
+	bf.setup()
 
 	rg = rhythm_game_env.RhythmGameEnv(song_file=sys.argv[1], diff=sys.argv[2])
 	game_state = GameState()
@@ -242,6 +242,7 @@ if __name__ == '__main__':
 	source.play()
 	pyg.clock.schedule_interval(update, 1/120.0)
 	pyg.app.run()
+	bf.cleanup()
 
 	
 

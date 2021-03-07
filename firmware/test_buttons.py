@@ -17,26 +17,27 @@ BUT = 25
 bf.setup()
 
 # Test button press
-if sys.argv[1] = "button":
+if sys.argv[1] == "button":
     try:
         while True:
-            vals = read_button()
-            if vals[4] == 1:
+            vals = bf.read_button()
+            print(vals[4])
+            if vals[4] == True:
                 print("Red button pressed!")
 
     except KeyboardInterrupt:
         bf.cleanup()
 
 # Test LED Flash
-else if sys.argv[1] = "led":
+elif sys.argv[1] == "led":
     try:
         while True:
-            flash_led([0, 0, 0, 0, 1])
+            bf.flash_led([0, 0, 0, 0, 1])
             sleep(1)
 
     except KeyboardInterrupt:
         bf.cleanup()
 
 else:
-    print("Invalid test")
+    print("Invalid test -- specify 'button' or 'led'")
 

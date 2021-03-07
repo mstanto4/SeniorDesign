@@ -30,12 +30,12 @@ LED_C_Y = 19
 LED_C_R = 26
 
 # Button flash time (in seconds)
-FLASH_TIME = 0.5
+FLASH_TIME = 0.05 
 
 # Sets up RPi GPIOs and all above specified pins
 def setup():
     GPIO.setwarnings(False)
-    GPIO.setmode(GPIO.Board)
+    GPIO.setmode(GPIO.BCM)
 
     # Set up the direction and default values of pins
 
@@ -46,11 +46,11 @@ def setup():
     GPIO.setup(LED_P_Y, GPIO.OUT)
     GPIO.setup(LED_P_R, GPIO.OUT)
 
-    GPIO.setup(BUT_P_W, GPIO.IN)
-    GPIO.setup(BUT_P_B, GPIO.IN)
-    GPIO.setup(BUT_P_G, GPIO.IN)
-    GPIO.setup(BUT_P_Y, GPIO.IN)
-    GPIO.setup(BUT_P_R, GPIO.IN)
+    GPIO.setup(BUT_P_W, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(BUT_P_B, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(BUT_P_G, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(BUT_P_Y, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(BUT_P_R, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     # Neural network
     GPIO.setup(LED_C_W, GPIO.OUT)
@@ -81,21 +81,21 @@ def read_button():
         button_vals[1] = True
 
     if GPIO.input(BUT_P_G) == GPIO.LOW:
-        GPIO.output(LED_G_B, GPIO.HIGH)
+        GPIO.output(LED_P_G, GPIO.HIGH)
         sleep(FLASH_TIME)
-        GPIO.output(LED_G_B, GPIO.LOW)
+        GPIO.output(LED_P_G, GPIO.LOW)
         button_vals[2] = True
 
     if GPIO.input(BUT_P_Y) == GPIO.LOW:
-        GPIO.output(LED_G_Y, GPIO.HIGH)
+        GPIO.output(LED_P_Y, GPIO.HIGH)
         sleep(FLASH_TIME)
-        GPIO.output(LED_G_Y, GPIO.LOW)
+        GPIO.output(LED_P_Y, GPIO.LOW)
         button_vals[3] = True
 
     if GPIO.input(BUT_P_R) == GPIO.LOW:
-        GPIO.output(LED_G_R, GPIO.HIGH)
+        GPIO.output(LED_P_R, GPIO.HIGH)
         sleep(FLASH_TIME)
-        GPIO.output(LED_G_R, GPIO.LOW)
+        GPIO.output(LED_P_R, GPIO.LOW)
         button_vals[4] = True
 
     return button_vals
@@ -131,3 +131,15 @@ def flash_led(buttons):
 def cleanup():
     GPIO.cleanup()
 
+
+setup()
+
+try:
+    while (True):
+        vals = read_button()
+        print(vals[4])
+
+except KeyboardInterrupt:
+    cleanup()
+
+    

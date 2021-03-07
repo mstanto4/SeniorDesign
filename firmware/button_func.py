@@ -132,14 +132,3 @@ def cleanup():
     GPIO.cleanup()
 
 
-setup()
-
-try:
-    while (True):
-        vals = read_button()
-        print(vals[4])
-
-except KeyboardInterrupt:
-    cleanup()
-
-    

@@ -30,7 +30,7 @@ LED_C_Y = 19
 LED_C_R = 26
 
 # Button flash time (in seconds)
-FLASH_TIME = 0.05 
+FLASH_TIME = 0.05
 
 # Sets up RPi GPIOs and all above specified pins
 def setup():
@@ -69,7 +69,7 @@ def read_button():
 
     # Button value is pulled LOW when pressed due to pull up resistor.
     if GPIO.input(BUT_P_W) == GPIO.LOW:
-        GPIO.output(LED_P_W, GPIO.LOW)
+        GPIO.output(LED_P_W, GPIO.HIGH)
         sleep(FLASH_TIME)
         GPIO.output(LED_P_W, GPIO.LOW)
         button_vals[0] = True
@@ -130,5 +130,16 @@ def flash_led(buttons):
 
 def cleanup():
     GPIO.cleanup()
+
+# Test code
+# setup()
+# 
+# try:
+#     while True:
+#         flash_led([True,True,True,True,True])
+#         sleep(0.5)
+#         
+# except KeyboardInterrupt:
+#     cleanup()
 
 

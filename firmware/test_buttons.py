@@ -10,10 +10,6 @@ from time import sleep
 import button_func as bf
 import sys
 
-# Test with red button only
-LED = 9
-BUT = 25
-
 bf.setup()
 
 # Test button press
@@ -21,9 +17,9 @@ if sys.argv[1] == "button":
     try:
         while True:
             vals = bf.read_button()
-            print(vals[4])
-            if vals[4] == True:
-                print("Red button pressed!")
+            print(vals[0])
+            if vals[0] == True:
+                print("White button pressed!")
 
     except KeyboardInterrupt:
         bf.cleanup()
@@ -32,8 +28,7 @@ if sys.argv[1] == "button":
 elif sys.argv[1] == "led":
     try:
         while True:
-            bf.flash_led([0, 0, 0, 0, 1])
-            sleep(1)
+            bf.flash_led([True, True, True, True, True])
 
     except KeyboardInterrupt:
         bf.cleanup()

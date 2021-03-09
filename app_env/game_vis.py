@@ -3,7 +3,13 @@ import sys
 sys.path.append('/usr/local/lib/python3.9/site-packages')
 sys.path.append('../firmware')
 
-import button_func as bf
+cheese0 = 175
+cheese1 = 315
+cheese2 = 450
+cheese3 = 580
+cheese4 = 725
+
+#import button_func as bf
 import rhythm_game_env
 import numpy as np
 import pyglet as pyg
@@ -24,27 +30,27 @@ class GameState():
 	#	print(keys)
 	#	print(self.action)
 		#button stuff
-		self.action = bf.read_button()
-		if(self.action[0] == True):
-			press[0] = 1;
-		else:
-			press[0] = 0;
-		if(self.action[1] == True):
-			press[1] = 1;
-		else:
-			press[1] = 0;
-		if(self.action[2] == True):
-			press[2] = 1;
-		else:
-			press[2] = 0;
-		if(self.action[3] == True):
-			press[3] = 1;
-		else:
-			press[3] = 0;
-		if(self.action[4] == True):
-			press[4] = 1;
-		else:
-			press[4] = 0;
+	#	self.action = bf.read_button()
+	#	if(self.action[0] == True):
+	#		press[0] = 1;
+	#	else:
+	#		press[0] = 0;
+	#	if(self.action[1] == True):
+	#		press[1] = 1;
+	#	else:
+	#		press[1] = 0;
+	#	if(self.action[2] == True):
+	#		press[2] = 1;
+	#	else:
+	#		press[2] = 0;
+	#	if(self.action[3] == True):
+	#		press[3] = 1;
+	#	else:
+	#		press[3] = 0;
+	#	if(self.action[4] == True):
+	#		press[4] = 1;
+	#	else:
+	#		press[4] = 0;
 
 
 		self.done, self.reward, self.state = rg.step(self.action)
@@ -57,15 +63,15 @@ class GameState():
 		if(len(rg.visible_notes) > self.rows_visible):
 			self.rows_visible += 1
 			if(rg.visible_notes[len(rg.visible_notes)-1][0] == True):
-				notes1.append(pyg.sprite.Sprite(note_image, x = 290, y = 350, batch=note_batch))
+				notes1.append(pyg.sprite.Sprite(note_image, x = cheese0, y = 350, batch=note_batch))
 			if(rg.visible_notes[len(rg.visible_notes)-1][1] == True):
-				notes2.append(pyg.sprite.Sprite(note_image, x = 510, y = 350, batch=note_batch))
+				notes2.append(pyg.sprite.Sprite(note_image, x = cheese1, y = 350, batch=note_batch))
 			if(rg.visible_notes[len(rg.visible_notes)-1][2] == True):
-				notes3.append(pyg.sprite.Sprite(note_image, x = 700, y = 350, batch=note_batch))
+				notes3.append(pyg.sprite.Sprite(note_image, x = cheese2, y = 350, batch=note_batch))
 			if(rg.visible_notes[len(rg.visible_notes)-1][3] == True):
-				notes4.append(pyg.sprite.Sprite(note_image, x = 875, y = 350, batch=note_batch))
+				notes4.append(pyg.sprite.Sprite(note_image, x = cheese3, y = 350, batch=note_batch))
 			if(rg.visible_notes[len(rg.visible_notes)-1][4] == True):
-				notes5.append(pyg.sprite.Sprite(note_image, x = 1075, y = 350, batch=note_batch))
+				notes5.append(pyg.sprite.Sprite(note_image, x = cheese4, y = 350, batch=note_batch))
 		elif(len(rg.visible_notes) < self.rows_visible):
 			self.rows_visible -= 1	
 		
@@ -126,8 +132,8 @@ class GameState():
 pyg.resource.path = ['res','res/images','res/sounds','res/fonts']
 pyg.resource.reindex()
 
-#image height = 656 width = 1500
-image = pyg.resource.image('testBackground2.jpg')
+#image height = 768 width = 1024
+image = pyg.resource.image('BackgroundFinal.png')
 window = pyg.window.Window(width = image.width, height = image.height)
 
 #pyg.resource.add_font('Haster.ttf')
@@ -145,6 +151,11 @@ def on_draw():
 	window.clear()
 	image.blit(0,0)
 	note_batch.draw()
+	pressT1.draw()
+	pressT2.draw()
+	pressT3.draw()
+	pressT4.draw()
+	pressT5.draw()
 	if(score != 0):
 		score.draw()
 	if(press[0] != 0):
@@ -158,49 +169,49 @@ def on_draw():
 	if(press[4] != 0):
 		press5.draw()
 
-#@window.event
-#def on_key_press(symbol, modifiers):
-#	if(symbol == key.Z):
-#		keys['z'] = True
-#		game_state.action[0] = True
-#		press[0] = 1
-#	elif(symbol == key.X):
-#		keys['x'] = True
-#		game_state.action[1] = True
-#		press[1] = 1
-#	elif(symbol == key.C):
-#		keys['c'] = True
-#		game_state.action[2] = True
-#		press[2] = 1
-#	elif(symbol == key.V):
-#		keys['v'] = True
-#		game_state.action[3] = True
-#		press[3] = 1
-#	elif(symbol == key.B):
-#		keys['b'] = True
-#		game_state.action[4] = True
-#		press[4] = 1
-#@window.event
-#def on_key_release(symbol,modifiers):
-#	if(symbol == key.Z):
-#		keys['z'] = False
-#		press[0] = 0
-#	elif(symbol == key.X):
-#		keys['x'] = False
-#		press[1] = 0
-#	elif(symbol == key.C):
-#		keys['c'] = False
-#		press[2] = 0
-#	elif(symbol == key.V):
-#		keys['v'] = False
-#		press[3] = 0
-#	elif(symbol == key.B):
-#		keys['b'] = False
-#		press[4] = 0
+@window.event
+def on_key_press(symbol, modifiers):
+	if(symbol == key.Z):
+		keys['z'] = True
+		game_state.action[0] = True
+		press[0] = 1
+	elif(symbol == key.X):
+		keys['x'] = True
+		game_state.action[1] = True
+		press[1] = 1
+	elif(symbol == key.C):
+		keys['c'] = True
+		game_state.action[2] = True
+		press[2] = 1
+	elif(symbol == key.V):
+		keys['v'] = True
+		game_state.action[3] = True
+		press[3] = 1
+	elif(symbol == key.B):
+		keys['b'] = True
+		game_state.action[4] = True
+		press[4] = 1
+@window.event
+def on_key_release(symbol,modifiers):
+	if(symbol == key.Z):
+		keys['z'] = False
+		press[0] = 0
+	elif(symbol == key.X):
+		keys['x'] = False
+		press[1] = 0
+	elif(symbol == key.C):
+		keys['c'] = False
+		press[2] = 0
+	elif(symbol == key.V):
+		keys['v'] = False
+		press[3] = 0
+	elif(symbol == key.B):
+		keys['b'] = False
+		press[4] = 0
 
 if __name__ == '__main__':
 	#setup buttons
-	bf.setup()
+	#bf.setup()
 
 	rg = rhythm_game_env.RhythmGameEnv(song_file=sys.argv[1], diff=sys.argv[2])
 	game_state = GameState()
@@ -231,18 +242,31 @@ if __name__ == '__main__':
 	white_image = pyg.resource.image('white.png')
 	red_image = pyg.resource.image('red.png')
 	press = [0,0,0,0,0]
-	press1 = pyg.sprite.Sprite(red_image, x = 290, y = 24)
-	press2 = pyg.sprite.Sprite(yellow_image, x = 510, y = 24)
-	press3 = pyg.sprite.Sprite(green_image, x = 700, y = 24)
-	press4 = pyg.sprite.Sprite(blue_image, x = 875, y = 24)
-	press5 = pyg.sprite.Sprite(white_image, x = 1075, y = 24)
+	press1 = pyg.sprite.Sprite(red_image, x = cheese0, y = 24)
+	press2 = pyg.sprite.Sprite(yellow_image, x = cheese1, y = 24)
+	press3 = pyg.sprite.Sprite(green_image, x = cheese2, y = 24)
+	press4 = pyg.sprite.Sprite(blue_image, x = cheese3, y = 24)
+	press5 = pyg.sprite.Sprite(white_image, x = cheese4, y = 24)
+		
+	yellow_image_trans = pyg.resource.image('yellowT.png')
+	blue_image_trans = pyg.resource.image('blueT.png')
+	green_image_trans = pyg.resource.image('greenT.png')
+	white_image_trans = pyg.resource.image('whiteT.png')
+	red_image_trans = pyg.resource.image('redT.png')
+	pressT1 = pyg.sprite.Sprite(red_image_trans, x = cheese0, y = 24)
+	pressT2 = pyg.sprite.Sprite(yellow_image_trans, x = cheese1, y = 24)
+	pressT3 = pyg.sprite.Sprite(green_image_trans, x = cheese2, y = 24)
+	pressT4 = pyg.sprite.Sprite(blue_image_trans, x = cheese3, y = 24)
+	pressT5 = pyg.sprite.Sprite(white_image_trans, x = cheese4, y = 24)
+
 	
+
 	source = pyg.resource.media(rg.music)
 
 	source.play()
-	pyg.clock.schedule_interval(update, 1/120.0)
+	pyg.clock.schedule_interval(update, 1/180.0)
 	pyg.app.run()
-	bf.cleanup()
+	#bf.cleanup()
 
 	
 

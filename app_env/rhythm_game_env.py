@@ -29,8 +29,6 @@ class RhythmGameEnv(gym.Env):
 			with open(params_file) as file:
 				params = json.load(file)
 
-		# Maybe determine number of measures beforehand and initialize list with
-		# that many values. This could avoid pointer issues.
 		self.measure_list = []
 		self.bpms = []
 		self.bpm_beats = []
@@ -71,18 +69,12 @@ class RhythmGameEnv(gym.Env):
 				text2 = x.strip().split(':')
 				if(text2[0] == "#OFFSET"):
 					self.offset = float(text2[1][:-1])
-				# elif(text2[0] == "#SAMPLESTART"):
-				#	self.sample_start = float(text2[1])
-				# elif(text2[0] == "#SAMPLELENGTH"):
-				#	self.sample_start = float(text2[1])
 
 				elif(text2[0] == "#BPMS"):
 					temp = text2[1].split(',')
-					#remove ;
 					temp[len(temp)-1] = temp[len(temp)-1][:-1]
 					for i in range(len(temp)):
 						bpm_pair = temp[i].split('=')
-						# self.bpms[float(bpm_pair[0])] = float(bpm_pair[1])
 						self.bpm_beats.append(float(bpm_pair[0]))
 						self.bpms.append(float((bpm_pair[1])))
 				elif(text2[0] == "#STOPS"):
@@ -168,7 +160,6 @@ class RhythmGameEnv(gym.Env):
 		self.stop_steps = []
 
 		for i in range(1, len(self.bpm_beats)):
-			# self.bpm_steps.append(self.bpm_beats[i] * self.dt * 60 / self.bpms[i])
 			self.bpm_steps.append(0)
 
 			for j in range(i):
@@ -197,17 +188,17 @@ class RhythmGameEnv(gym.Env):
 		self.curr_measure = 0
 		self.curr_num_notes = self.measure_list[self.curr_measure].num_notes
 		self.curr_note = 0
-		# self.curr_release_interval = 240 / (self.curr_bpm * self.curr_num_notes * self.dt)
+		# Spacing as a function of bpm and dt (frame rate). Spacing is variable; 
+		# note speed is constant to make transistions between measures easier.
 		self.curr_note_spacing = self.note_speed * 240 / (self.curr_bpm * self.curr_num_notes * self.dt)
 
 		self.visible_notes = []
 		self.visible_note_distances = []
 
-		# self.max_threshold = 10 --> set the max number of misses
-		# possibly make max number of misses dependent on the level of difficulty the user is playing at 
-
 		
 	def step(self, action): 
+		"""Progress the state of the game by dt seconds. React to given action.
+		   Return reward, resultant state, and whether or not the game is done."""
 		done = False
 		stopped = False
 		reward = 0
@@ -242,12 +233,13 @@ class RhythmGameEnv(gym.Env):
 				del self.visible_notes[0]
 				del self.visible_note_distances[0]
 
+		# Note outside of scoring range.
 		else:
 
 			if action != self.empty_note:
 				reward = -1
 
-
+		# Bring visible notes closer to the end area.
 		for i in range(len(self.visible_note_distances)):
 			self.visible_note_distances[i] -= self.note_speed
 
@@ -325,6 +317,8 @@ class RhythmGameEnv(gym.Env):
 
 
 	def calc_beat(self, curr_step):
+		"""Determine on which beat a step will occur. Useful for converting 
+		   BPM change and stop locations."""
 		
 		beat_calc = curr_step * self.dt * self.curr_bpm / 60.0
 

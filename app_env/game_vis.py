@@ -18,13 +18,16 @@ from pyglet import font
 
 class GameState():
 	def __init__(self):	
-		self.done = False
+		self.start = False
+		self.gameOver = False
 		self.score = 0
 		self.reward = 0
 		self.state = []
 		self.blank_note = [False for x in range(5)]
 		self.action = self.blank_note
-		self.rows_visible = []	
+		pyg.resource.add_font('Haster.ttf')
+		haster = font.load('HASTER')
+		self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
 
 	def update(self, dt):
 	#	print(keys)
@@ -45,56 +48,90 @@ class GameState():
 	#		press[2] = 0;
 	#	if(self.action[3] == True):
 	#		press[3] = 1;
-	#	else:
+	#	else
 	#		press[3] = 0;
 	#	if(self.action[4] == True):
 	#		press[4] = 1;
 	#	else:
 	#		press[4] = 0;
+		if(self.start == False):
+			if(self.action[0] == True):
+				self.reset()
+				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Every.smm", diff="Easy")
+				source = pyg.resource.media(self.rg.music)
+				source.play()
+				self.start = True
+			if(self.action[1] == True):
+				self.reset()
+				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Holding Out For A Hero.smm", diff="Easy")
+				source = pyg.resource.media(self.rg.music)
+				source.play()
+				self.start = True
+			if(self.action[2] == True):
+				self.reset()
+				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Every.smm", diff="Easy")
+				source = pyg.resource.media(self.rg.music)
+				source.play()
+				self.start = True
+			if(self.action[3] == True):
+				self.reset()
+				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Every.smm", diff="Easy")
+				source = pyg.resource.media(self.rg.music)
+				source.play()
+				self.start = True
+			if(self.action[4] == True):
+				self.reset()
+				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Every.smm", diff="Easy")
+				source = pyg.resource.media(self.rg.music)
+				source.play()
+				self.start = True	
+		else:	
+			self.done, self.reward, self.state = self.rg.step(self.action)
+			self.score += self.reward
+			if(self.reward != 0):
+				print(self.score)
+			self.action = [False for x in range(5)]
+			
+			if(len(notes1) != 0):
+				for x in range(0, len(notes1)):
+					del notes1[0];
+			if(len(notes2) != 0):
+				for x in range(0, len(notes2)):
+					del notes2[0];
+			if(len(notes3) != 0):
+				for x in range(0, len(notes3)):
+					del notes3[0];
+			if(len(notes4) != 0):
+				for x in range(0, len(notes4)):
+					del notes4[0];
+			if(len(notes5) != 0):
+				for x in range(0, len(notes5)):
+					del notes5[0];
 
+			for num, note in enumerate(self.rg.visible_notes):
+				if(note[0] == True):
+					notes1.append(pyg.sprite.Sprite(note_image, x = cheese0, y = 350 - 1.66*(192 - self.rg.visible_note_distances[num]), batch=note_batch))
+				if(note[1] == True):
+					notes2.append(pyg.sprite.Sprite(note_image, x = cheese1, y = 350 - 1.66*(192 - self.rg.visible_note_distances[num]), batch=note_batch))
+				if(note[2] == True):
+					notes3.append(pyg.sprite.Sprite(note_image, x = cheese2, y = 350 - 1.66*(192 - self.rg.visible_note_distances[num]), batch=note_batch))
+				if(note[3] == True):
+					notes4.append(pyg.sprite.Sprite(note_image, x = cheese3, y = 350 - 1.66*(192 - self.rg.visible_note_distances[num]), batch=note_batch))
+				if(note[4] == True):
+					notes5.append(pyg.sprite.Sprite(note_image, x = cheese4, y = 350 - 1.66*(192 - self.rg.visible_note_distances[num]), batch=note_batch))
 
-		self.done, self.reward, self.state = rg.step(self.action)
-		self.score += self.reward
-		if(self.reward != 0):
-			print(self.score)
-		self.action = [False for x in range(5)]
-		
-		if(len(notes1) != 0):
-			for x in range(0, len(notes1)):
-				del notes1[0];
-		if(len(notes2) != 0):
-			for x in range(0, len(notes2)):
-				del notes2[0];
-		if(len(notes3) != 0):
-			for x in range(0, len(notes3)):
-				del notes3[0];
-		if(len(notes4) != 0):
-			for x in range(0, len(notes4)):
-				del notes4[0];
-		if(len(notes5) != 0):
-			for x in range(0, len(notes5)):
-				del notes5[0];
-
-		for num, note in enumerate(rg.visible_notes):
-			if(note[0] == True):
-				notes1.append(pyg.sprite.Sprite(note_image, x = cheese0, y = 350 - 1.7*(192 - rg.visible_note_distances[num]), batch=note_batch))
-			if(note[1] == True):
-				notes2.append(pyg.sprite.Sprite(note_image, x = cheese1, y = 350 - 1.7*(192 - rg.visible_note_distances[num]), batch=note_batch))
-			if(note[2] == True):
-				notes3.append(pyg.sprite.Sprite(note_image, x = cheese2, y = 350 - 1.7*(192 - rg.visible_note_distances[num]), batch=note_batch))
-			if(note[3] == True):
-				notes4.append(pyg.sprite.Sprite(note_image, x = cheese3, y = 350 - 1.7*(192 - rg.visible_note_distances[num]), batch=note_batch))
-			if(note[4] == True):
-				notes5.append(pyg.sprite.Sprite(note_image, x = cheese4, y = 350 - 1.7*(192 - rg.visible_note_distances[num]), batch=note_batch))
-
-
-		
-#		score = pyg.text.Label(text="Score:" + str(self.score), color = (255,255,255,255), font_name = haster, x = 1250, y = 550)	
-
-	#	print(rg.visible_notes)
-	#	print(len(rg.visible_notes))
-	#	print(self.rows_visible)
-	#	print(self.score)
+			self.scoreText.text = "Score: %d" % self.score
+			if(self.done == True):
+				self.start = False	
+	def reset(self):
+		self.start = False
+		self.gameOver = False
+		self.score = 0
+		self.reward = 0
+		self.state = []
+		self.blank_note = [False for x in range(5)]
+		self.action = self.blank_note
+		self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
 
 pyg.resource.path = ['res','res/images','res/sounds','res/fonts']
 pyg.resource.reindex()
@@ -102,10 +139,6 @@ pyg.resource.reindex()
 #image height = 768 width = 1024
 image = pyg.resource.image('BackgroundFinal.png')
 window = pyg.window.Window(width = image.width, height = image.height)
-
-#pyg.resource.add_font('Haster.ttf')
-#haster = font.load('Haster')
-score = 0
 
 pyg.options['audio'] = ('openal', 'pulse', 'directsound', 'silent')
 
@@ -123,8 +156,7 @@ def on_draw():
 	pressT3.draw()
 	pressT4.draw()
 	pressT5.draw()
-	if(score != 0):
-		score.draw()
+	game_state.scoreText.draw()
 	if(press[0] != 0):
 		press1.draw()
 	if(press[1] != 0):
@@ -180,10 +212,7 @@ if __name__ == '__main__':
 	#setup buttons
 	#bf.setup()
 
-	rg = rhythm_game_env.RhythmGameEnv(song_file=sys.argv[1], diff=sys.argv[2])
 	game_state = GameState()
-	print(rg.title)
-	print(rg.music)
 
 	pyg.resource.path = ['res','res/images','res/sounds','res/fonts']
 	pyg.resource.reindex()
@@ -226,11 +255,6 @@ if __name__ == '__main__':
 	pressT4 = pyg.sprite.Sprite(blue_image_trans, x = cheese3, y = 24)
 	pressT5 = pyg.sprite.Sprite(white_image_trans, x = cheese4, y = 24)
 
-	
-
-	source = pyg.resource.media(rg.music)
-
-	source.play()
 	pyg.clock.schedule_interval(update, 1/180.0)
 	pyg.app.run()
 	#bf.cleanup()

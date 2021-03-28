@@ -86,10 +86,8 @@ class GameState():
 				source.play()
 				self.start = True	
 		else:	
-			self.done, self.reward, self.state = self.rg.step(self.action)
+			self.gameOver, self.reward, self.state = self.rg.step(self.action)
 			self.score += self.reward
-			if(self.reward != 0):
-				print(self.score)
 			self.action = [False for x in range(5)]
 			
 			if(len(notes1) != 0):
@@ -121,8 +119,8 @@ class GameState():
 					notes5.append(pyg.sprite.Sprite(note_image, x = cheese4, y = 350 - 1.66*(192 - self.rg.visible_note_distances[num]), batch=note_batch))
 
 			self.scoreText.text = "Score: %d" % self.score
-			if(self.done == True):
-				self.start = False	
+			if(self.gameOver == True):
+				self.start = False
 	def reset(self):
 		self.start = False
 		self.gameOver = False
@@ -151,22 +149,61 @@ def on_draw():
 	window.clear()
 	image.blit(0,0)
 	note_batch.draw()
-	pressT1.draw()
-	pressT2.draw()
-	pressT3.draw()
-	pressT4.draw()
-	pressT5.draw()
 	game_state.scoreText.draw()
-	if(press[0] != 0):
-		press1.draw()
-	if(press[1] != 0):
-		press2.draw()
-	if(press[2] != 0):
-		press3.draw()
-	if(press[3] != 0):
-		press4.draw()
-	if(press[4] != 0):
-		press5.draw()
+	if(game_state.start == False and game_state.gameOver == False):
+		pop.draw()
+		redTextSpice.draw()
+		yellowTextSpice.draw()
+		greenTextSpice.draw()
+		blueTextSpice.draw()
+		whiteTextSpice.draw()	
+		redText.draw()
+		yellowText.draw()
+		greenText.draw()
+		blueText.draw()
+		whiteText.draw()
+		RATMANN.draw()
+	if(game_state.start == True):
+		pressT1.draw()
+		pressT2.draw()
+		pressT3.draw()
+		pressT4.draw()
+		pressT5.draw()
+		if(press[0] != 0):
+			press1.draw()
+		if(press[1] != 0):
+			press2.draw()
+		if(press[2] != 0):
+			press3.draw()
+		if(press[3] != 0):
+			press4.draw()
+		if(press[4] != 0):
+			press5.draw()
+	if(game_state.gameOver == True):
+		pop.draw()
+		redTextSpice.draw()
+		yellowTextSpice.draw()
+		greenTextSpice.draw()
+		blueTextSpice.draw()
+		whiteTextSpice.draw()	
+		redText.draw()
+		yellowText.draw()
+		greenText.draw()
+		blueText.draw()
+		whiteText.draw()
+		if(game_state.score < 100):
+			star1.draw()
+			starT2.draw()
+			starT3.draw()
+		if(game_state.score >= 100 and game_state.score <= 300):
+			star1.draw()
+			star2.draw()
+			starT3.draw()
+		if(game_state.score > 300):
+			star1.draw()
+			star2.draw()
+			star3.draw()
+	
 
 @window.event
 def on_key_press(symbol, modifiers):
@@ -254,6 +291,32 @@ if __name__ == '__main__':
 	pressT3 = pyg.sprite.Sprite(green_image_trans, x = cheese2, y = 24)
 	pressT4 = pyg.sprite.Sprite(blue_image_trans, x = cheese3, y = 24)
 	pressT5 = pyg.sprite.Sprite(white_image_trans, x = cheese4, y = 24)
+
+	star_image = pyg.resource.image('star.png')
+	star1 = pyg.sprite.Sprite(star_image, x = 350, y = 685)
+	star2 = pyg.sprite.Sprite(star_image, x = 450, y = 685)
+	star3 = pyg.sprite.Sprite(star_image, x = 550, y = 685)
+	star_image_trans = pyg.resource.image('starT.png')
+	starT2 = pyg.sprite.Sprite(star_image_trans, x = 450, y = 685)
+	starT3 = pyg.sprite.Sprite(star_image_trans, x = 550, y = 685)
+
+	popUp = pyg.resource.image('PopUp.png')
+	pop = pyg.sprite.Sprite(popUp, x = 25, y = 5)
+
+	redText = pyg.text.Label('Press          to play "Everytime I Touch"', font_name='HASTER',font_size=35, x=120, y=600)
+	yellowText = pyg.text.Label('Press          to play "Holding Out For A Hero"', font_name='HASTER',font_size=35, x=120, y=500) 
+	greenText = pyg.text.Label('Press          to play "Everytime I Touch"', font_name='HASTER',font_size=35, x=120, y=400)
+	blueText = pyg.text.Label('Press          to play "Everytime I Touch"', font_name='HASTER',font_size=35, x=120, y=300)
+	whiteText = pyg.text.Label('Press          to play "Everytime I Touch"', font_name='HASTER',font_size=35, x=120, y=200)
+
+	RATMANN = pyg.text.Label('RAT MANN',color = [253,150,50,255], font_name = 'HASTER', font_size = 72, x = 325, y = 685)
+
+	redTextSpice = pyg.sprite.Sprite(red_image, x = 200, y = 560)
+	yellowTextSpice = pyg.sprite.Sprite(yellow_image, x = 200, y = 460)
+	greenTextSpice = pyg.sprite.Sprite(green_image, x = 200, y = 360)
+	blueTextSpice = pyg.sprite.Sprite(blue_image, x = 200, y = 260)
+	whiteTextSpice = pyg.sprite.Sprite(white_image, x = 200, y = 160)
+
 
 	pyg.clock.schedule_interval(update, 1/180.0)
 	pyg.app.run()

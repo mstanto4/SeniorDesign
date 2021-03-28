@@ -24,8 +24,8 @@ class GameState():
 		self.state = []
 		self.blank_note = [False for x in range(5)]
 		self.action = self.blank_note
-		self.rows_visible = 0
-	
+		self.rows_visible = []	
+
 	def update(self, dt):
 	#	print(keys)
 	#	print(self.action)
@@ -58,70 +58,37 @@ class GameState():
 		if(self.reward != 0):
 			print(self.score)
 		self.action = [False for x in range(5)]
-
-		#create new notes
-		if(len(rg.visible_notes) > self.rows_visible):
-			self.rows_visible += 1
-			if(rg.visible_notes[len(rg.visible_notes)-1][0] == True):
-				notes1.append(pyg.sprite.Sprite(note_image, x = cheese0, y = 350, batch=note_batch))
-			if(rg.visible_notes[len(rg.visible_notes)-1][1] == True):
-				notes2.append(pyg.sprite.Sprite(note_image, x = cheese1, y = 350, batch=note_batch))
-			if(rg.visible_notes[len(rg.visible_notes)-1][2] == True):
-				notes3.append(pyg.sprite.Sprite(note_image, x = cheese2, y = 350, batch=note_batch))
-			if(rg.visible_notes[len(rg.visible_notes)-1][3] == True):
-				notes4.append(pyg.sprite.Sprite(note_image, x = cheese3, y = 350, batch=note_batch))
-			if(rg.visible_notes[len(rg.visible_notes)-1][4] == True):
-				notes5.append(pyg.sprite.Sprite(note_image, x = cheese4, y = 350, batch=note_batch))
-		elif(len(rg.visible_notes) < self.rows_visible):
-			self.rows_visible -= 1	
 		
-		#delete notes
-		count = [0,0,0,0,0]
-		for num, row in enumerate(rg.visible_notes):
-			for which, note in enumerate(row):
-				if(note == True):
-					count[which] += 1
+		if(len(notes1) != 0):
+			for x in range(0, len(notes1)):
+				del notes1[0];
+		if(len(notes2) != 0):
+			for x in range(0, len(notes2)):
+				del notes2[0];
+		if(len(notes3) != 0):
+			for x in range(0, len(notes3)):
+				del notes3[0];
+		if(len(notes4) != 0):
+			for x in range(0, len(notes4)):
+				del notes4[0];
+		if(len(notes5) != 0):
+			for x in range(0, len(notes5)):
+				del notes5[0];
 
-		if(count[0] < len(notes1)):
-			notes1[0].delete()
-			del notes1[0]			
-		if(count[1] < len(notes2)):
-			notes2[0].delete()
-			del notes2[0]			
-		if(count[2] < len(notes3)):
-			notes3[0].delete()
-			del notes3[0]			
-		if(count[3] < len(notes4)):
-			notes4[0].delete()
-			del notes4[0]			
-		if(count[4] < len(notes5)):
-			notes5[0].delete()
-			del notes5[0]			
-	
-		#move notes
-		one = 0
-		two = 0
-		three = 0
-		four = 0
-		five = 0
-		for num, row in enumerate(rg.visible_notes):
-			for which, note in enumerate(row):
-				if(note == True):
-					if(which == 0):
-						notes1[one].y = 350 - 1.7*(192 - rg.visible_note_distances[num]) 
-						one += 1			
-					if(which == 1):
-						notes2[two].y = 350 - 1.7*(192 - rg.visible_note_distances[num]) 
-						two += 1			
-					if(which == 2):
-						notes3[three].y = 350 - 1.7*(192 - rg.visible_note_distances[num]) 
-						three += 1			
-					if(which == 3):
-						notes4[four].y = 350 - 1.7*(192 - rg.visible_note_distances[num]) 
-						four += 1			
-					if(which == 4):
-						notes5[five].y = 350 - 1.7*(192 - rg.visible_note_distances[num]) 
-						five += 1			
+		for num, note in enumerate(rg.visible_notes):
+			if(note[0] == True):
+				notes1.append(pyg.sprite.Sprite(note_image, x = cheese0, y = 350 - 1.7*(192 - rg.visible_note_distances[num]), batch=note_batch))
+			if(note[1] == True):
+				notes2.append(pyg.sprite.Sprite(note_image, x = cheese1, y = 350 - 1.7*(192 - rg.visible_note_distances[num]), batch=note_batch))
+			if(note[2] == True):
+				notes3.append(pyg.sprite.Sprite(note_image, x = cheese2, y = 350 - 1.7*(192 - rg.visible_note_distances[num]), batch=note_batch))
+			if(note[3] == True):
+				notes4.append(pyg.sprite.Sprite(note_image, x = cheese3, y = 350 - 1.7*(192 - rg.visible_note_distances[num]), batch=note_batch))
+			if(note[4] == True):
+				notes5.append(pyg.sprite.Sprite(note_image, x = cheese4, y = 350 - 1.7*(192 - rg.visible_note_distances[num]), batch=note_batch))
+
+
+		
 #		score = pyg.text.Label(text="Score:" + str(self.score), color = (255,255,255,255), font_name = haster, x = 1250, y = 550)	
 
 	#	print(rg.visible_notes)

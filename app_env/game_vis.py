@@ -18,6 +18,7 @@ from pyglet import font
 
 class GameState():
 	def __init__(self):	
+		
 		self.start = False
 		self.gameOver = False
 		self.score = 0
@@ -28,32 +29,10 @@ class GameState():
 		pyg.resource.add_font('Haster.ttf')
 		haster = font.load('HASTER')
 		self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
-
+		self.counter = 0
+	
 	def update(self, dt):
-	#	print(keys)
-	#	print(self.action)
-		#button stuff
-	#	self.action = bf.read_button()
-	#	if(self.action[0] == True):
-	#		press[0] = 1;
-	#	else:
-	#		press[0] = 0;
-	#	if(self.action[1] == True):
-	#		press[1] = 1;
-	#	else:
-	#		press[1] = 0;
-	#	if(self.action[2] == True):
-	#		press[2] = 1;
-	#	else:
-	#		press[2] = 0;
-	#	if(self.action[3] == True):
-	#		press[3] = 1;
-	#	else
-	#		press[3] = 0;
-	#	if(self.action[4] == True):
-	#		press[4] = 1;
-	#	else:
-	#		press[4] = 0;
+		
 		if(self.start == False):
 			if(self.action[0] == True):
 				self.reset()
@@ -86,6 +65,30 @@ class GameState():
 				source.play()
 				self.start = True	
 		else:	
+			#button stuff
+			if(counter % 100 == 0):
+				self.action = bf.read_button()
+				if(self.action[0] == True):
+					press[0] = 1;
+				else:
+					press[0] = 0;
+				if(self.action[1] == True):
+					press[1] = 1;
+				else:
+					press[1] = 0;
+				if(self.action[2] == True):
+					press[2] = 1;
+				else:
+					press[2] = 0;
+				if(self.action[3] == True):
+					press[3] = 1;
+				else
+					press[3] = 0;
+				if(self.action[4] == True):
+					press[4] = 1;
+				else:
+					press[4] = 0;
+				counter = 0
 			self.gameOver, self.reward, self.state = self.rg.step(self.action)
 			self.score += self.reward
 			self.action = [False for x in range(5)]
@@ -121,7 +124,9 @@ class GameState():
 			self.scoreText.text = "Score: %d" % self.score
 			if(self.gameOver == True):
 				self.start = False
+	
 	def reset(self):
+		
 		self.start = False
 		self.gameOver = False
 		self.score = 0
@@ -130,6 +135,7 @@ class GameState():
 		self.blank_note = [False for x in range(5)]
 		self.action = self.blank_note
 		self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
+		self.counter = 0
 
 pyg.resource.path = ['res','res/images','res/sounds','res/fonts']
 pyg.resource.reindex()
@@ -204,46 +210,6 @@ def on_draw():
 			star2.draw()
 			star3.draw()
 	
-
-@window.event
-def on_key_press(symbol, modifiers):
-	if(symbol == key.Z):
-		keys['z'] = True
-		game_state.action[0] = True
-		press[0] = 1
-	elif(symbol == key.X):
-		keys['x'] = True
-		game_state.action[1] = True
-		press[1] = 1
-	elif(symbol == key.C):
-		keys['c'] = True
-		game_state.action[2] = True
-		press[2] = 1
-	elif(symbol == key.V):
-		keys['v'] = True
-		game_state.action[3] = True
-		press[3] = 1
-	elif(symbol == key.B):
-		keys['b'] = True
-		game_state.action[4] = True
-		press[4] = 1
-@window.event
-def on_key_release(symbol,modifiers):
-	if(symbol == key.Z):
-		keys['z'] = False
-		press[0] = 0
-	elif(symbol == key.X):
-		keys['x'] = False
-		press[1] = 0
-	elif(symbol == key.C):
-		keys['c'] = False
-		press[2] = 0
-	elif(symbol == key.V):
-		keys['v'] = False
-		press[3] = 0
-	elif(symbol == key.B):
-		keys['b'] = False
-		press[4] = 0
 
 if __name__ == '__main__':
 	#setup buttons

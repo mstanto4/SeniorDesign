@@ -213,7 +213,7 @@ def on_draw():
 
 if __name__ == '__main__':
 	#setup buttons
-	#bf.setup()
+	bf.setup()
 
 	game_state = GameState()
 
@@ -286,7 +286,7 @@ if __name__ == '__main__':
 
 	pyg.clock.schedule_interval(update, 1/180.0)
 	pyg.app.run()
-	#bf.cleanup()
+	bf.cleanup()
 
 	
 

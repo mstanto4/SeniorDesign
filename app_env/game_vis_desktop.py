@@ -18,6 +18,7 @@ from pyglet import font
 
 class GameState():
 	def __init__(self):	
+		
 		self.start = False
 		self.gameOver = False
 		self.score = 0
@@ -30,30 +31,7 @@ class GameState():
 		self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
 
 	def update(self, dt):
-	#	print(keys)
-	#	print(self.action)
-		#button stuff
-	#	self.action = bf.read_button()
-	#	if(self.action[0] == True):
-	#		press[0] = 1;
-	#	else:
-	#		press[0] = 0;
-	#	if(self.action[1] == True):
-	#		press[1] = 1;
-	#	else:
-	#		press[1] = 0;
-	#	if(self.action[2] == True):
-	#		press[2] = 1;
-	#	else:
-	#		press[2] = 0;
-	#	if(self.action[3] == True):
-	#		press[3] = 1;
-	#	else
-	#		press[3] = 0;
-	#	if(self.action[4] == True):
-	#		press[4] = 1;
-	#	else:
-	#		press[4] = 0;
+		
 		if(self.start == False):
 			if(self.action[0] == True):
 				self.reset()
@@ -121,7 +99,9 @@ class GameState():
 			self.scoreText.text = "Score: %d" % self.score
 			if(self.gameOver == True):
 				self.start = False
+	
 	def reset(self):
+		
 		self.start = False
 		self.gameOver = False
 		self.score = 0
@@ -246,8 +226,6 @@ def on_key_release(symbol,modifiers):
 		press[4] = 0
 
 if __name__ == '__main__':
-	#setup buttons
-	#bf.setup()
 
 	game_state = GameState()
 
@@ -320,7 +298,6 @@ if __name__ == '__main__':
 
 	pyg.clock.schedule_interval(update, 1/180.0)
 	pyg.app.run()
-	#bf.cleanup()
 
 	
 

@@ -1,4 +1,5 @@
 import gym
+from gym import spaces
 import json
 import numpy as np
 import sys
@@ -195,10 +196,26 @@ class RhythmGameEnv(gym.Env):
 		self.visible_notes = []
 		self.visible_note_distances = []
 
+		self.action_space = spaces.Box(low=np.array([0]), high=np.array([31]))
+		self.observation_space = spaces.Box(low=np.array([0.0, 0.0]), high=np.array([31.0, self.track_length]))
+
 		
 	def step(self, action): 
 		"""Progress the state of the game by dt seconds. React to given action.
 		   Return reward, resultant state, and whether or not the game is done."""
+
+		assert (np.array([action]) in self.action_space), "Action must be an integer between 0 and 31." 
+
+		# Convert integer action to boolean list.
+		action_array = []
+		i = 5
+		d = 16
+
+		while i >= 1:
+			action_array.append(bool(int(action) & int(d)))
+			d /= 2
+			i -= 1
+
 		done = False
 		stopped = False
 		reward = 0
@@ -206,16 +223,16 @@ class RhythmGameEnv(gym.Env):
 		# No notes, and input is given.
 		if len(self.visible_notes) == 0:
 
-			if action != self.empty_note:
+			if action_array != self.empty_note:
 				reward = -1
 
 		# Note is within scoring range.
 		elif self.visible_note_distances[0] <= self.okay_threshold:
 
-			if action == self.empty_note:
+			if action_array == self.empty_note:
 				reward = 0
 
-			elif list(self.visible_notes[0]) == action:
+			elif list(self.visible_notes[0]) == action_array:
 
 				if self.visible_note_distances[0] <= self.perfect_threshold:
 					reward = 3
@@ -225,6 +242,9 @@ class RhythmGameEnv(gym.Env):
 				
 				elif self.visible_note_distances[0] <= self.okay_threshold: 
 					reward = 1
+
+			elif self.visible_note_distances[0] <= self.note_speed:
+				reward = -1
 
 			else:
 				reward = -1
@@ -236,7 +256,7 @@ class RhythmGameEnv(gym.Env):
 		# Note outside of scoring range.
 		else:
 
-			if action != self.empty_note:
+			if action_array != self.empty_note:
 				reward = -1
 
 		# Bring visible notes closer to the end area.
@@ -253,7 +273,7 @@ class RhythmGameEnv(gym.Env):
 			done = True
 
 		if done:
-			return done, reward, [self.empty_note, 0]
+			return done, reward, [0, 0]
 
 		# Track beats for BPM changes and stops.
 		self.curr_beat = self.calc_beat(self.num_steps)
@@ -273,7 +293,7 @@ class RhythmGameEnv(gym.Env):
 			self.num_steps += 1
 
 			if len(self.visible_notes) == 0:
-				state = [self.empty_note, 0]
+				state = [0, 0]
 
 			else:
 				state = [self.visible_notes[0], self.visible_note_distances[0]]
@@ -309,7 +329,20 @@ class RhythmGameEnv(gym.Env):
 			state = [self.empty_note, 0]
 
 		else:
-			state = [self.visible_notes[0], self.visible_note_distances[0]]
+
+			int_state = 0;
+			s = 4
+
+			for bit in self.visible_notes[0]:
+				int_state += int(bit) << s
+				s -= 1
+
+			dist = self.visible_note_distances[0]
+			
+			if dist < 0:
+				print(self.visible_note_distances)
+			state = [int_state, self.visible_note_distances[0]]
+			# assert (np.array(state) in self.observation_space), "Invalid ovservation."
 
 
 
@@ -330,5 +363,3 @@ class RhythmGameEnv(gym.Env):
 				beat_calc += self.dt * self.bpm_steps[i] * (self.bpms[i - 1] - self.bpms[i]) / 60.0
 
 		return int(beat_calc)
-
-		

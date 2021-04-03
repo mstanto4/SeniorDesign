@@ -264,7 +264,7 @@ class RhythmGameEnv(gym.Env):
 			self.visible_note_distances[i] -= self.note_speed
 
 		# Delete notes that are no longer visible.
-		if len(self.visible_notes) != 0 and self.visible_note_distances[0] < 0:
+		while len(self.visible_notes) != 0 and self.visible_note_distances[0] < 0:
 			del self.visible_notes[0]
 			del self.visible_note_distances[0]
 
@@ -341,8 +341,9 @@ class RhythmGameEnv(gym.Env):
 			
 			if dist < 0:
 				print(self.visible_note_distances)
+
 			state = [int_state, self.visible_note_distances[0]]
-			# assert (np.array(state) in self.observation_space), "Invalid ovservation."
+			assert (np.array(state) in self.observation_space), "Invalid ovservation."
 
 
 

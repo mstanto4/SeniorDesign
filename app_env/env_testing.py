@@ -11,9 +11,9 @@ print(rg.bpm_steps)
 done = False
 score = 0
 reward = 0
-state = []
+state = [0, 0]
 blank_note = [False for x in range(5)]
-action = blank_note
+action = 0
 
 while not done:
 	prev_state = state
@@ -25,16 +25,16 @@ while not done:
 		print("State:", prev_state)
 		print("Reward:", reward)
 
-		if action != list(prev_state[0]):
+		if action != prev_state[0]:
 			print("Mismatch detected.")
 
 		print()
 
 	if state[1] <= rg.perfect_threshold:
-		action = list(state[0])
+		action = state[0]
 
 	else:
-		action = blank_note
+		action = 0
 
 
 """	print("Current beat:", rg.curr_beat)

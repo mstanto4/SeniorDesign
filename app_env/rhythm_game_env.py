@@ -232,6 +232,10 @@ class RhythmGameEnv(gym.Env):
 			if action_array == self.empty_note:
 				reward = 0
 
+				if self.visible_note_distances[0] < self.note_speed and list(self.visible_notes[0]) != list(self.empty_note):
+					print("note slipped")
+					reward = -1
+
 			elif list(self.visible_notes[0]) == action_array:
 
 				if self.visible_note_distances[0] <= self.perfect_threshold:
@@ -242,9 +246,6 @@ class RhythmGameEnv(gym.Env):
 				
 				elif self.visible_note_distances[0] <= self.okay_threshold: 
 					reward = 1
-
-			elif self.visible_note_distances[0] <= self.note_speed:
-				reward = -1
 
 			else:
 				reward = -1
@@ -296,8 +297,9 @@ class RhythmGameEnv(gym.Env):
 				state = [0, 0]
 
 			else:
-				state = [self.visible_notes[0], self.visible_note_distances[0]]
+				state = [list_to_5bit(self.visible_notes[0]), self.visible_note_distances[0]]
 
+			assert (np.array(state) in self.observation_space), "Invalid ovservation."
 			return done, reward, state
 
 
@@ -326,26 +328,19 @@ class RhythmGameEnv(gym.Env):
 				self.curr_note_spacing = self.note_speed * 240 / (self.curr_bpm * self.curr_num_notes * self.dt)
 
 		if len(self.visible_notes) == 0:
-			state = [self.empty_note, 0]
+			state = [0, 0]
 
 		else:
 
-			int_state = 0;
+			"""int_state = 0;
 			s = 4
 
 			for bit in self.visible_notes[0]:
 				int_state += int(bit) << s
-				s -= 1
+				s -= 1"""
 
-			dist = self.visible_note_distances[0]
-			
-			if dist < 0:
-				print(self.visible_note_distances)
-
-			state = [int_state, self.visible_note_distances[0]]
+			state = [list_to_5bit(self.visible_notes[0]), self.visible_note_distances[0]]
 			assert (np.array(state) in self.observation_space), "Invalid ovservation."
-
-
 
 		return done, reward, state
 
@@ -364,3 +359,14 @@ class RhythmGameEnv(gym.Env):
 				beat_calc += self.dt * self.bpm_steps[i] * (self.bpms[i - 1] - self.bpms[i]) / 60.0
 
 		return int(beat_calc)
+
+	
+def list_to_5bit(bools):
+	new_int = 0
+	s = 4
+
+	for bit in bools:
+		new_int += int(bit) << s
+		s -= 1
+
+	return new_int

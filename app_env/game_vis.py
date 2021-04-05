@@ -266,7 +266,7 @@ if __name__ == '__main__':
 	starT2 = pyg.sprite.Sprite(star_image_trans, x = 450, y = 685)
 	starT3 = pyg.sprite.Sprite(star_image_trans, x = 550, y = 685)
 
-	popUp = pyg.resource.image('PopUp.png')
+	popUp = pyg.resource.image('PopUp2.png')
 	pop = pyg.sprite.Sprite(popUp, x = 25, y = 5)
 
 	redText = pyg.text.Label('Press          to play "Everytime I Touch"', font_name='HASTER',font_size=35, x=120, y=600)

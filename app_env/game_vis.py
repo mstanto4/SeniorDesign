@@ -48,13 +48,13 @@ class GameState():
 				self.start = True
 			if(self.action[2] == True):
 				self.reset()
-				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Every.smm", diff="Easy")
+				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Bohemian Rhapsody.smm", diff="Hard")
 				source = pyg.resource.media(self.rg.music)
 				source.play()
 				self.start = True
 			if(self.action[3] == True):
 				self.reset()
-				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Every.smm", diff="Easy")
+				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Every.smm", diff="Hard")
 				source = pyg.resource.media(self.rg.music)
 				source.play()
 				self.start = True
@@ -271,8 +271,8 @@ if __name__ == '__main__':
 
 	redText = pyg.text.Label('Press          to play "Everytime I Touch"', font_name='HASTER',font_size=35, x=120, y=600)
 	yellowText = pyg.text.Label('Press          to play "Holding Out For A Hero"', font_name='HASTER',font_size=35, x=120, y=500) 
-	greenText = pyg.text.Label('Press          to play "Everytime I Touch"', font_name='HASTER',font_size=35, x=120, y=400)
-	blueText = pyg.text.Label('Press          to play "Everytime I Touch"', font_name='HASTER',font_size=35, x=120, y=300)
+	greenText = pyg.text.Label('Press          to play "Bohemian Rhapsody"', font_name='HASTER',font_size=35, x=120, y=400)
+	blueText = pyg.text.Label('Press          to play "I\'ll Make A Man Out Of You"', font_name='HASTER',font_size=35, x=120, y=300)
 	whiteText = pyg.text.Label('Press          to play "Everytime I Touch"', font_name='HASTER',font_size=35, x=120, y=200)
 
 	RATMANN = pyg.text.Label('RAT MANN',color = [253,150,50,255], font_name = 'HASTER', font_size = 72, x = 325, y = 685)

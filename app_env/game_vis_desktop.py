@@ -29,39 +29,47 @@ class GameState():
 		pyg.resource.add_font('Haster.ttf')
 		haster = font.load('HASTER')
 		self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
-
 	def update(self, dt):
-		
 		if(self.start == False):
 			if(self.action[0] == True):
 				self.reset()
 				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Every.smm", diff="Easy")
 				source = pyg.resource.media(self.rg.music)
-				source.play()
+				player.queue(source)
+				player.volume = 0.1
+				player.play()
 				self.start = True
 			if(self.action[1] == True):
 				self.reset()
 				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Holding Out For A Hero.smm", diff="Easy")
 				source = pyg.resource.media(self.rg.music)
-				source.play()
+				player.queue(source)
+				player.volume = 0.1
+				player.play()
 				self.start = True
 			if(self.action[2] == True):
 				self.reset()
 				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Bohemian Rhapsody.smm", diff="Hard")
 				source = pyg.resource.media(self.rg.music)
-				source.play()
+				player.queue(source)
+				player.volume = 0.1
+				player.play()
 				self.start = True
 			if(self.action[3] == True):
 				self.reset()
 				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/mulan.smm", diff="Challenge")
 				source = pyg.resource.media(self.rg.music)
-				source.play()
+				player.queue(source)
+				player.volume = 0.1
+				player.play()
 				self.start = True
 			if(self.action[4] == True):
 				self.reset()
 				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Georgia.smm", diff="Easy")
 				source = pyg.resource.media(self.rg.music)
-				source.play()
+				player.queue(source)
+				player.volume = 0.1
+				player.play()
 				self.start = True	
 		else:	
 			self.gameOver, self.reward, self.state = self.rg.step(self.action)
@@ -228,6 +236,7 @@ def on_key_release(symbol,modifiers):
 if __name__ == '__main__':
 
 	game_state = GameState()
+	player = pyg.media.Player()
 
 	pyg.resource.path = ['res','res/images','res/sounds','res/fonts']
 	pyg.resource.reindex()

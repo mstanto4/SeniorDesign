@@ -14,7 +14,7 @@ class EONSWrapperEnv:
 		self.rhythm_game_env = RhythmGameEnv(params_file, song_file, diff)
 		#self.observation_space = spaces.Box(low=np.array([False for x in range(6)], dtype=bool), high=np.array([True for x in range(6)], dtype=bool))
 		#self.action_space = spaces.Box(low=np.array([False for x in range(5)], dtype=bool), high=np.array([True for x in range(5)], dtype=bool))
-		self.observation_space = spaces.Box(low=np.array([0.0, 0.0]), high=np.array([1.0, 1.0]))
+		self.observation_space = spaces.Box(low=np.array([0.0]), high=np.array([1.0]))
 		self.action_space = spaces.Discrete(2)
 		self.prev_note = 0
 
@@ -43,8 +43,9 @@ class EONSWrapperEnv:
 		state, reward, done, info = self.rhythm_game_env.step(note)
 		self.prev_note = state[0]
 		state[0] /= 31.0
+		state[-1] /= self.rhythm_game_env.track_length
 
-		if self.net_efficacy == 1:
+		"""if self.net_efficacy == 1:
 
 			if state[1] <= self.rhythm_game_env.okay_threshold:
 				state[-1] = 1.0
@@ -60,11 +61,11 @@ class EONSWrapperEnv:
 				state[-1] = 1.0
 
 		if state[-1] != 1.0:
-			state[-1] = 0
+			state[-1] = 0"""
 
-		assert (state in self.observation_space), "State must be array of six bools."
+		assert (state[-1:] in self.observation_space), "State must be array of six bools."
 
-		return state, reward, done, info
+		return state[-1:], reward, done, info
 
 
 	def seed(self, seed):
@@ -73,7 +74,7 @@ class EONSWrapperEnv:
 	
 	def reset(self):
 		self.rhythm_game_env.reset()
-		return np.array([0.0, 0.0])
+		return np.array([0.0])
 
 	
 	def close(self):

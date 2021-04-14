@@ -121,6 +121,7 @@ class ControlApp():
         self.seed = test_config["test_seed"]
         score = self.do_episode_suite(net, processor)
         self.wrap_up()
+        return score
 
     def do_one_episode(self, network, processor, seed=0):
         pass

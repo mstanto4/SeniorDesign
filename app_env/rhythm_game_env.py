@@ -28,7 +28,7 @@ class RhythmGameEnv(gym.Env):
 		if params_file != None:
 
 			with open(params_file) as file:
-				params = json.load(file)
+				self.params = json.load(file)
 
 		self.measure_list = []
 		self.bpms = []

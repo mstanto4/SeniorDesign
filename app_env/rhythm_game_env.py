@@ -347,7 +347,18 @@ class RhythmGameEnv(gym.Env):
 
 	
 	def reset(self):
-		self.__init__()
+		self.num_steps = 0
+		self.measure_steps = 0
+		self.curr_beat = 0
+		self.curr_bpm = self.bpms[0]
+		
+		self.curr_measure = 0
+		self.curr_num_notes = self.measure_list[self.curr_measure].num_notes
+		self.curr_note = 0
+		self.curr_note_spacing = self.note_speed * 240 / (self.curr_bpm * self.curr_num_notes * self.dt)
+
+		self.visible_notes = []
+		self.visible_note_distances = []
 		return np.array([0, 0])
 
 

@@ -1,0 +1,7 @@
+{
+"track_length": 20,
+"note_speed": 1,
+"perfect_threshold": 2,
+"great_threshold": 3,
+"okay_threshold": 4
+}

@@ -80,8 +80,8 @@ class OpenAIGymApp(ControlApp):
         self.n_outputs = self.decoder.get_num_neurons()
 
     def do_one_episode(self, network, processor, seed=None):
-        if ("num_processes" not in self.config or self.config["num_processes"] != 0):
-            self.env = gym.make(self.env_name)
+        #if ("num_processes" not in self.config or self.config["num_processes"] != 0):
+            #self.env = gym.make(self.env_name)
         if (seed is not None): 
             self.env.seed(seed)
         
@@ -108,6 +108,7 @@ class OpenAIGymApp(ControlApp):
                 observations, reward, done, info = self.env.step(actions[0])
             else:
                 observations, reward, done, info = self.env.step(actions)
+
             score += reward
             if (self.config["app_vis"] == True):
                 self.env.render()

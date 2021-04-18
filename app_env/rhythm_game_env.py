@@ -28,7 +28,7 @@ class RhythmGameEnv(gym.Env):
 		if params_file != None:
 
 			with open(params_file) as file:
-				params = json.load(file)
+				self.params = json.load(file)
 
 		self.measure_list = []
 		self.bpms = []
@@ -219,6 +219,7 @@ class RhythmGameEnv(gym.Env):
 		done = False
 		stopped = False
 		reward = 0
+		info = None
 
 		# No notes, and input is given.
 		if len(self.visible_notes) == 0:
@@ -233,7 +234,7 @@ class RhythmGameEnv(gym.Env):
 				reward = 0
 
 				if self.visible_note_distances[0] < self.note_speed and list(self.visible_notes[0]) != list(self.empty_note):
-					print("note slipped")
+					#print("note slipped")
 					reward = -1
 
 			elif list(self.visible_notes[0]) == action_array:
@@ -274,7 +275,7 @@ class RhythmGameEnv(gym.Env):
 			done = True
 
 		if done:
-			return done, reward, [0, 0]
+			return [0, 0], reward, done, info
 
 		# Track beats for BPM changes and stops.
 		self.curr_beat = self.calc_beat(self.num_steps)
@@ -300,7 +301,7 @@ class RhythmGameEnv(gym.Env):
 				state = [list_to_5bit(self.visible_notes[0]), self.visible_note_distances[0]]
 
 			assert (np.array(state) in self.observation_space), "Invalid ovservation."
-			return done, reward, state
+			return state, reward, done, info
 
 
 		# Track position of current note to determine when to make visible.
@@ -342,7 +343,23 @@ class RhythmGameEnv(gym.Env):
 			state = [list_to_5bit(self.visible_notes[0]), self.visible_note_distances[0]]
 			assert (np.array(state) in self.observation_space), "Invalid ovservation."
 
-		return done, reward, state
+		return state, reward, done, info
+
+	
+	def reset(self):
+		self.num_steps = 0
+		self.measure_steps = 0
+		self.curr_beat = 0
+		self.curr_bpm = self.bpms[0]
+		
+		self.curr_measure = 0
+		self.curr_num_notes = self.measure_list[self.curr_measure].num_notes
+		self.curr_note = 0
+		self.curr_note_spacing = self.note_speed * 240 / (self.curr_bpm * self.curr_num_notes * self.dt)
+
+		self.visible_notes = []
+		self.visible_note_distances = []
+		return np.array([0, 0])
 
 
 	def calc_beat(self, curr_step):

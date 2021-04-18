@@ -1,3 +1,5 @@
+""" Configurable script for testing networks in the EONSWrapper environment. """
+
 import argparse
 import neuro
 import gnp
@@ -11,9 +13,11 @@ parser = argparse.ArgumentParser(description="RATMANN Testing Script")
 parser.add_argument("--params_file", required=False, type=str, default=None)
 parser.add_argument("--song_file", required=False, type=str, default="test.smm")
 parser.add_argument("--network_filename", required=False, type=str, default="network.json")
+parser.add_argument("--difficulty", required=False, type=str, default="Easy")
+parser.add_argument("--network_efficacy", required=False, type=int, default=3)
 args = parser.parse_args()
 
-game_env = EONSWrapperEnv(params_file=args.params_file, song_file=args.song_file)
+game_env = EONSWrapperEnv(params_file=args.params_file, song_file=args.song_file, diff=args.difficulty, net_efficacy=args.network_efficacy)
 
 openai_config = {"env_object" : game_env, 
 "encoder" : {"spikes" : {"flip_flop" : 2, "max_spikes" : 8, "min" : 0, "max" : 0.5}},

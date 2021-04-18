@@ -1,3 +1,4 @@
+""" Configurable script for training networks to perform in the EONSWrapper environment. """
 import argparse
 import neuro
 import gnp
@@ -20,7 +21,7 @@ parser.add_argument("--num_epochs", required=False, type=int, default=10)
 parser.add_argument("--network_filename", required=False, type=str, default="network.json")
 args = parser.parse_args()
 
-game_env = EONSWrapperEnv(params_file=args.params_file, song_file=args.song_file, net_efficacy=1)
+game_env = EONSWrapperEnv(params_file=args.params_file, song_file=args.song_file)
 
 """openai_config = {"env_object": game_env, "num_processes": 0, "app_vis": False, 
 "seed": None, "runtime": 20, "episodes": 5, "network_filename": "baby_boy", 

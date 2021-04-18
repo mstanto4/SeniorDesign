@@ -1,7 +1,7 @@
 {
-"track_length": 20,
+"track_length": 100,
 "note_speed": 1,
-"perfect_threshold": 2,
-"great_threshold": 3,
-"okay_threshold": 4
+"perfect_threshold": 5,
+"great_threshold": 8,
+"okay_threshold": 10
 }

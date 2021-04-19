@@ -74,7 +74,7 @@ class GameState():
 		else:	
 			action = sum(2**i for i, v in enumerate(reversed(self.action)) if v)	
 
-			self.gameOver, self.reward, self.state = self.rg.step(action)
+			self.state, self.reward, self.gameOver, info = self.rg.step(action)
 			self.score += self.reward
 			self.action = [False for x in range(5)]
 			

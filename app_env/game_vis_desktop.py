@@ -33,6 +33,7 @@ class GameState():
 		self.state = []
 		self.blank_note = [False for x in range(5)]
 		self.action = self.blank_note
+		self.net_env = None
 		pyg.resource.add_font('Haster.ttf')
 		haster = font.load('HASTER')
 		self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
@@ -84,20 +85,27 @@ class GameState():
 				player.play()
 				self.start = True	
 
-			# Set up network player.
-			openai_config = {"env_object" : self.net_env, 
-			"encoder" : {"spikes" : {"flip_flop" : 2, "max_spikes" : 8, "min" : 0, "max" : 0.5}},
-			"seed" : None, "encoder_interval" : 1, "decoder" : "wta", 
-			"runtime" : 20, "episodes" : 10, "network_filename":"testmann", 
-			"output_spike_counts_params":"", "proc_name":"gnp", "app_name":"ratmann", 
-			"printing_params" : {"show_populations": False, "include_networks": True, 
-			"show_input_counts": False, "show_output_counts": False, "show_output_times": False, 
-			"show_suites": False, "no_show_epochs": True}, "app_vis": False, "app_config": {}}
+			if self.net_env is not None:
+				# Set up network player.
+				openai_config = {"env_object" : self.net_env, 
+				"encoder" : {"spikes" : {"flip_flop" : 2, "max_spikes" : 8, "min" : 0, "max" : 0.5}},
+				"seed" : None, "encoder_interval" : 1, "decoder" : "wta", 
+				"runtime" : 20, "episodes" : 10, "network_filename":"testmann", 
+				"output_spike_counts_params":"", "proc_name":"gnp", "app_name":"ratmann", 
+				"printing_params" : {"show_populations": False, "include_networks": True, 
+				"show_input_counts": False, "show_output_counts": False, "show_output_times": False, 
+				"show_suites": False, "no_show_epochs": True}, "app_vis": False, "app_config": {}}
 
-			self.neuro_app = OpenAIGymApp(openai_config)
-			self.timestep = 0
-			self.net_score = 0
-			self.net_observations = self.net_env.reset()
+				self.neuro_app = OpenAIGymApp(openai_config)
+				self.network = self.neuro_app.read_network("ratmann_network.json")
+				self.timestep = 0
+				self.net_score = 0
+				self.net_observations = self.net_env.reset()
+
+				with open("config/gnp.json") as f:
+					gnp_params = json.loads(f.read())
+
+				self.neuro_proc = gnp.Processor(gnp_params)
 
 		else:	
 			action = sum(2**i for i, v in enumerate(reversed(self.action)) if v)	
@@ -141,6 +149,7 @@ class GameState():
 			self.scoreText.text = "Score: %d" % self.score
 			if(self.gameOver == True):
 				self.start = False
+				self.net_env = None
 	
 	def reset(self):
 		

@@ -101,11 +101,16 @@ class GameState():
 				self.timestep = 0
 				self.net_score = 0
 				self.net_observations = self.net_env.reset()
+				self.net_done = False
 
 				with open("config/gnp.json") as f:
 					gnp_params = json.loads(f.read())
 
 				self.neuro_proc = gnp.Processor(gnp_params)
+				self.neuro_proc.load_network(self.network)
+
+				for i in range(self.neuro_app.n_outputs):
+					self.neuro_proc.track_output(i)
 
 		else:	
 			action = sum(2**i for i, v in enumerate(reversed(self.action)) if v)	
@@ -115,6 +120,19 @@ class GameState():
 
 			t = time.time()
 			self.net_actions = self.neuro_app.get_actions(self.neuro_proc, self.net_observations, self.timestep)
+			self.timestep += 1
+
+			if not self.neuro_app.box_action:
+				
+				for i in range(len(self.net_actions)):
+					self.net_actions[i] = int(self.net_actions[i])
+
+			if len(self.net_actions) == 1:
+				self.net_observations, reward, self.net_done, info = self.net_env.step(self.net_actions[0])
+			else:
+				self.net_observations, reward, self.net_done, info = self.net_env.step(self.net_actions)
+
+			self.net_score += reward
 
 			self.action = [False for x in range(5)]
 			

@@ -1,0 +1,10 @@
+{
+  "stdp_class": 0,
+  "stdp_length": 1,
+  "persistent_stdp": false,
+  "leak": {
+    "leak_class": 2,
+    "amount": 0.0,
+    "target": 0.0
+  }
+}

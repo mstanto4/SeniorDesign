@@ -1,0 +1,20 @@
+{
+  "num_poles":          1,
+  "max_x":              2.4,
+  "max_theta":          0.209,
+  "max_xd":             2,
+  "max_thetad":         2,
+  "max_timesteps":      15000,
+  "dt":                 0.02,
+  "steps_per_push":     1,
+  "gravity":            9.81,
+  "cart_mass":          1,
+  "cart_friction":      0,
+  "force_magnitude":    10,
+  "pole_lengths":       [ 1 ],
+  "pole_masses":        [ 0.1 ],
+  "pole_ball_masses":   [ 0.0 ],
+  "pole_frictions":     [ 0 ],
+  "use_velocities":     true,
+  "include_no_action":  false
+}

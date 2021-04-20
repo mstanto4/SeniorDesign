@@ -37,6 +37,8 @@ class GameState():
 		pyg.resource.add_font('Haster.ttf')
 		haster = font.load('HASTER')
 		self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
+		self.netScoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=600, y=700)
+		
 
 	def update(self, dt):
 		if(self.start == False):
@@ -166,6 +168,7 @@ class GameState():
 					notes5.append(pyg.sprite.Sprite(note_image, x = cheese4, y = 350 - 1.66*(192 - self.rg.visible_note_distances[num]), batch=note_batch))
 
 			self.scoreText.text = "Score: %d" % self.score
+			self.netScoreText.text = "Score: %d" % self.net_score
 			if(self.gameOver == True):
 				self.start = False
 				self.net_env = None
@@ -180,6 +183,7 @@ class GameState():
 		self.blank_note = [False for x in range(5)]
 		self.action = self.blank_note
 		self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
+		self.netScoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=600, y=700)
 
 pyg.resource.path = ['res','res/images','res/sounds','res/fonts']
 pyg.resource.reindex()
@@ -200,6 +204,7 @@ def on_draw():
 	image.blit(0,0)
 	note_batch.draw()
 	game_state.scoreText.draw()
+	game_state.netScoreText.draw()
 	if(game_state.start == False and game_state.gameOver == False):
 		pop.draw()
 		redTextSpice.draw()

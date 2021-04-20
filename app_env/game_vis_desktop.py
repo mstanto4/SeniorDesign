@@ -37,7 +37,7 @@ class GameState():
 		pyg.resource.add_font('Haster.ttf')
 		haster = font.load('HASTER')
 		self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
-		self.netScoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=600, y=700)
+		self.netScoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=450, y=700)
 		
 
 	def update(self, dt):
@@ -183,7 +183,7 @@ class GameState():
 		self.blank_note = [False for x in range(5)]
 		self.action = self.blank_note
 		self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
-		self.netScoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=600, y=700)
+		self.netScoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=450, y=700)
 
 pyg.resource.path = ['res','res/images','res/sounds','res/fonts']
 pyg.resource.reindex()
@@ -363,7 +363,7 @@ if __name__ == '__main__':
 	blueText = pyg.text.Label('Press          to play "I\'ll Make A Man Out Of You"', font_name='HASTER',font_size=33, x=120, y=300)
 	whiteText = pyg.text.Label('Press          to play "The Devil Went Down To Georgia"', font_name='HASTER',font_size=33, x=120, y=200)
 
-	RATMANN = pyg.text.Label('RAT MANN',color = [253,150,50,255], font_name = 'HASTER', font_size = 72, x = 325, y = 685)
+	RATMANN = pyg.text.Label('RAT MANN',color = [253,150,50,255], font_name = 'HASTER', font_size = 72, x = 10, y = 685)
 
 	redTextSpice = pyg.sprite.Sprite(red_image, x = 200, y = 560)
 	yellowTextSpice = pyg.sprite.Sprite(yellow_image, x = 200, y = 460)

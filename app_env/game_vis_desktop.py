@@ -2,6 +2,7 @@
 import sys
 sys.path.append('/usr/local/lib/python3.9/site-packages')
 sys.path.append('../firmware')
+sys.path.append('../neuro_lib')
 
 cheese0 = 175
 cheese1 = 315
@@ -15,6 +16,12 @@ import numpy as np
 import pyglet as pyg
 from pyglet.window import key
 from pyglet import font
+from eons_wrap_env import EONSWrapperEnv
+from utils.openai_gym import * 
+import gnp
+import gym
+import json
+import neuro
 
 class GameState():
 	def __init__(self):	
@@ -34,6 +41,7 @@ class GameState():
 			if(self.action[0] == True):
 				self.reset()
 				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Every.smm", diff="Easy")
+				self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Every.smm", diff="Easy")
 				source = pyg.resource.media(self.rg.music)
 				player.queue(source)
 				player.volume = 0.1
@@ -42,6 +50,7 @@ class GameState():
 			if(self.action[1] == True):
 				self.reset()
 				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Holding Out For A Hero.smm", diff="Easy")
+				self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Holding Out For A Hero.smm", diff="Easy")
 				source = pyg.resource.media(self.rg.music)
 				player.queue(source)
 				player.volume = 0.1
@@ -50,6 +59,7 @@ class GameState():
 			if(self.action[2] == True):
 				self.reset()
 				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Bohemian Rhapsody.smm", diff="Hard")
+				self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Bohemian Rhapsody.smm", diff="Hard")
 				source = pyg.resource.media(self.rg.music)
 				player.queue(source)
 				player.volume = 0.1
@@ -58,6 +68,7 @@ class GameState():
 			if(self.action[3] == True):
 				self.reset()
 				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/mulan.smm", diff="Challenge")
+				self.net_env = EONSWrapperEnv(song_file="res/smmFiles/mulan.smm", diff="Challenge")
 				source = pyg.resource.media(self.rg.music)
 				player.queue(source)
 				player.volume = 0.1
@@ -66,16 +77,37 @@ class GameState():
 			if(self.action[4] == True):
 				self.reset()
 				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Georgia.smm", diff="Easy")
+				self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Georgia.smm", diff="Easy")
 				source = pyg.resource.media(self.rg.music)
 				player.queue(source)
 				player.volume = 0.1
 				player.play()
 				self.start = True	
+
+			# Set up network player.
+			openai_config = {"env_object" : self.net_env, 
+			"encoder" : {"spikes" : {"flip_flop" : 2, "max_spikes" : 8, "min" : 0, "max" : 0.5}},
+			"seed" : None, "encoder_interval" : 1, "decoder" : "wta", 
+			"runtime" : 20, "episodes" : 10, "network_filename":"testmann", 
+			"output_spike_counts_params":"", "proc_name":"gnp", "app_name":"ratmann", 
+			"printing_params" : {"show_populations": False, "include_networks": True, 
+			"show_input_counts": False, "show_output_counts": False, "show_output_times": False, 
+			"show_suites": False, "no_show_epochs": True}, "app_vis": False, "app_config": {}}
+
+			self.neuro_app = OpenAIGymApp(openai_config)
+			self.timestep = 0
+			self.net_score = 0
+			self.net_observations = self.net_env.reset()
+
 		else:	
 			action = sum(2**i for i, v in enumerate(reversed(self.action)) if v)	
 
 			self.state, self.reward, self.gameOver, info = self.rg.step(action)
 			self.score += self.reward
+
+			t = time.time()
+			self.net_actions = self.neuro_app.get_actions(self.neuro_proc, self.net_observations, self.timestep)
+
 			self.action = [False for x in range(5)]
 			
 			if(len(notes1) != 0):

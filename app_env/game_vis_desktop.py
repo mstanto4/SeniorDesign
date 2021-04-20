@@ -37,7 +37,7 @@ class GameState():
 		pyg.resource.add_font('Haster.ttf')
 		haster = font.load('HASTER')
 		self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
-		self.netScoreText = pyg.text.Label('Neural Score: 0', font_name='HASTER',font_size=48, x=300, y=700)
+		self.netScoreText = pyg.text.Label('Neural Score: 0', font_name='HASTER',font_size=48, x=400, y=700)
 		
 
 	def update(self, dt):
@@ -183,7 +183,7 @@ class GameState():
 		self.blank_note = [False for x in range(5)]
 		self.action = self.blank_note
 		self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
-		self.netScoreText = pyg.text.Label('Neural Score: 0', font_name='HASTER',font_size=48, x=300, y=700)
+		self.netScoreText = pyg.text.Label('Neural Score: 0', font_name='HASTER',font_size=48, x=400, y=700)
 
 pyg.resource.path = ['res','res/images','res/sounds','res/fonts']
 pyg.resource.reindex()

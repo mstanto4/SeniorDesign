@@ -37,12 +37,13 @@ class GameState():
 		pyg.resource.add_font('Haster.ttf')
 		haster = font.load('HASTER')
 		self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
+
 	def update(self, dt):
 		if(self.start == False):
 			if(self.action[0] == True):
 				self.reset()
 				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Every.smm", diff="Easy")
-				self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Every.smm", diff="Easy")
+				self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Every.smm", diff="Easy", net_efficacy=2)
 				source = pyg.resource.media(self.rg.music)
 				player.queue(source)
 				player.volume = 0.1
@@ -51,7 +52,7 @@ class GameState():
 			if(self.action[1] == True):
 				self.reset()
 				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Holding Out For A Hero.smm", diff="Easy")
-				self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Holding Out For A Hero.smm", diff="Easy")
+				self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Holding Out For A Hero.smm", diff="Easy", net_efficacy=2)
 				source = pyg.resource.media(self.rg.music)
 				player.queue(source)
 				player.volume = 0.1
@@ -60,7 +61,7 @@ class GameState():
 			if(self.action[2] == True):
 				self.reset()
 				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Bohemian Rhapsody.smm", diff="Hard")
-				self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Bohemian Rhapsody.smm", diff="Hard")
+				self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Bohemian Rhapsody.smm", diff="Hard", net_efficacy=2)
 				source = pyg.resource.media(self.rg.music)
 				player.queue(source)
 				player.volume = 0.1
@@ -69,7 +70,7 @@ class GameState():
 			if(self.action[3] == True):
 				self.reset()
 				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/mulan.smm", diff="Challenge")
-				self.net_env = EONSWrapperEnv(song_file="res/smmFiles/mulan.smm", diff="Challenge")
+				self.net_env = EONSWrapperEnv(song_file="res/smmFiles/mulan.smm", diff="Challenge", net_efficacy=2)
 				source = pyg.resource.media(self.rg.music)
 				player.queue(source)
 				player.volume = 0.1
@@ -78,7 +79,7 @@ class GameState():
 			if(self.action[4] == True):
 				self.reset()
 				self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Georgia.smm", diff="Easy")
-				self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Georgia.smm", diff="Easy")
+				self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Georgia.smm", diff="Easy", net_efficacy=2)
 				source = pyg.resource.media(self.rg.music)
 				player.queue(source)
 				player.volume = 0.1

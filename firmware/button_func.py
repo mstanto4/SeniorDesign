@@ -18,7 +18,7 @@ LED_P_Y = 10
 LED_P_R = 9
 
 BUT_P_W = 15
-BUT_P_B = 23
+BUT_P_B = 18
 BUT_P_G = 23
 BUT_P_Y = 24
 BUT_P_R = 25
@@ -31,6 +31,9 @@ LED_C_R = 26
 
 # Button flash time (in seconds)
 FLASH_TIME = 0.05
+
+# Debouncer logic
+lastpinval = [GPIO.HIGH, GPIO.HIGH, GPIO.HIGH, GPIO.HIGH, GPIO.HIGH]
 
 # Sets up RPi GPIOs and all above specified pins
 def setup():
@@ -61,85 +64,56 @@ def setup():
 
 # Reads the status of the five input player buttons and returns the
 # result as a list of 1s and 0s. 1 means the button was pressed, 0
-# means the button was not pressed. This function also flashes the
-# LED of the corresponding button if the button was pressed.
+# means the button was not pressed.
 def read_button():
     # List holding what buttons are read to be high
     button_vals = [False,False,False,False,False]
 
     # Button value is pulled LOW when pressed due to pull up resistor.
-    if GPIO.input(BUT_P_W) == GPIO.LOW:
-        GPIO.output(LED_P_W, GPIO.HIGH)
-        sleep(FLASH_TIME)
-        GPIO.output(LED_P_W, GPIO.LOW)
+    if GPIO.input(BUT_P_W) == GPIO.HIGH and lastpinval[4] == GPIO.LOW:
         button_vals[4] = True
 
-    if GPIO.input(BUT_P_B) == GPIO.LOW:
-        GPIO.output(LED_P_B, GPIO.HIGH)
-        sleep(FLASH_TIME)
-        GPIO.output(LED_P_B, GPIO.LOW)
+    if GPIO.input(BUT_P_B) == GPIO.HIGH and lastpinval[3] == GPIO.LOW:
         button_vals[3] = True
 
-    if GPIO.input(BUT_P_G) == GPIO.LOW:
-        GPIO.output(LED_P_G, GPIO.HIGH)
-        sleep(FLASH_TIME)
-        GPIO.output(LED_P_G, GPIO.LOW)
+    if GPIO.input(BUT_P_G) == GPIO.HIGH and lastpinval[2] == GPIO.LOW:
         button_vals[2] = True
 
-    if GPIO.input(BUT_P_Y) == GPIO.LOW:
-        GPIO.output(LED_P_Y, GPIO.HIGH)
-        sleep(FLASH_TIME)
-        GPIO.output(LED_P_Y, GPIO.LOW)
+    if GPIO.input(BUT_P_Y) == GPIO.HIGH and lastpinval[1] == GPIO.LOW:
         button_vals[1] = True
 
-    if GPIO.input(BUT_P_R) == GPIO.LOW:
-        GPIO.output(LED_P_R, GPIO.HIGH)
-        sleep(FLASH_TIME)
-        GPIO.output(LED_P_R, GPIO.LOW)
+    if GPIO.input(BUT_P_R) == GPIO.HIGH and lastpinval[0] == GPIO.LOW:
         button_vals[0] = True
+
+    lastpinval[4] = GPIO.input(BUT_P_W)
+    lastpinval[3] = GPIO.input(BUT_P_B)
+    lastpinval[2] = GPIO.input(BUT_P_G)
+    lastpinval[1] = GPIO.input(BUT_P_Y)
+    lastpinval[0] = GPIO.input(BUT_P_R)
 
     return button_vals
 
-# This function takes a list of 5 values of 0s or 1s, and flashes the
-# corresponding button for values of 1.
-def flash_led(buttons):
-    if buttons[4] == True:
-        GPIO.output(LED_C_W, GPIO.HIGH)
-        sleep(FLASH_TIME)
-        GPIO.output(LED_C_W, GPIO.LOW)
-
-    if buttons[3] == True:
-        GPIO.output(LED_C_B, GPIO.HIGH)
-        sleep(FLASH_TIME)
-        GPIO.output(LED_C_B, GPIO.LOW)
-
-    if buttons[2] == True:
-        GPIO.output(LED_C_G, GPIO.HIGH)
-        sleep(FLASH_TIME)
-        GPIO.output(LED_C_G, GPIO.LOW)
-
-    if buttons[1] == True:
-        GPIO.output(LED_C_Y, GPIO.HIGH)
-        sleep(FLASH_TIME)
-        GPIO.output(LED_C_Y, GPIO.LOW)
-
-    if buttons[0] == True:
-        GPIO.output(LED_C_R, GPIO.HIGH)
-        sleep(FLASH_TIME)
-        GPIO.output(LED_C_R, GPIO.LOW)
+# This function takes a pin number and a boolean activate. If activate
+# is true, the LED is turned on. If activate is false, the LED is turned 
+# off.
+def flash_led(pin, activate):
+    if activate == True:
+        GPIO.output(pin, GPIO.HIGH)
+    if activate == False:
+        GPIO.output(pin, GPIO.LOW)
 
 def cleanup():
     GPIO.cleanup()
 
 # Test code
 # setup()
-# 
+ 
 # try:
-#     while True:
-#         flash_led([True,True,True,True,True])
-#         sleep(0.5)
-#         
-# except KeyboardInterrupt:
-#     cleanup()
+#    while True:
+#         test = read_button()
+#        print(test)
+         
+#except KeyboardInterrupt:
+#   cleanup()
 
 

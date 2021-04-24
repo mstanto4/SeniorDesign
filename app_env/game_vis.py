@@ -15,6 +15,12 @@ import numpy as np
 import pyglet as pyg
 from pyglet.window import key
 from pyglet import font
+from eons_wrap_env import EONSWrapperEnv
+from utils.openai_gym import *
+import gnp
+import gym
+import json
+import neuro
 
 class GameState():
     def __init__(self):	
@@ -28,7 +34,8 @@ class GameState():
         pyg.resource.add_font('Haster.ttf')
         haster = font.load('HASTER')
         self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
-        self.counter = 1
+        self.netScoreText = pyg.text.Label('Neural Score: 0', font_name='HASTER',font_size=48, x=400, y=700)
+	self.LEDcounter = [0,0,0,0,0,0,0,0,0,0]
 
     def update(self, dt):
         if(self.start == False):
@@ -36,7 +43,8 @@ class GameState():
             if(self.action[0] == True):
                 self.reset()
                 self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Every.smm", diff="Easy")
-                source = pyg.resource.media(self.rg.music)
+                self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Every.smm", diff="Easy", net_efficacy=2)
+		source = pyg.resource.media(self.rg.music)
                 player.queue(source)
                 player.volume = 0.1
                 player.play()
@@ -44,6 +52,7 @@ class GameState():
             if(self.action[1] == True):
                 self.reset()
                 self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Holding Out For A Hero.smm", diff="Easy")
+		self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Holding Out For A Hero.smm", diff="Easy", net_efficacy=2)
                 source = pyg.resource.media(self.rg.music)
                 player.queue(source)
                 player.volume = 0.1
@@ -52,6 +61,7 @@ class GameState():
             if(self.action[2] == True):
                 self.reset()
                 self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Bohemian Rhapsody.smm", diff="Hard")
+		self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Bohemian Rhapsody.smm", diff="Hard", net_efficacy=2)
                 source = pyg.resource.media(self.rg.music)
                 player.queue(source)
                 player.volume = 0.1
@@ -60,6 +70,7 @@ class GameState():
             if(self.action[3] == True):
                 self.reset()
                 self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/mulan.smm", diff="Challenge")
+		self.net_env = EONSWrapperEnv(song_file="res/smmFiles/mulan.smm", diff="Challenge", net_efficacy=2)
                 source = pyg.resource.media(self.rg.music)
                 player.queue(source)
                 player.volume = 0.1
@@ -68,40 +79,109 @@ class GameState():
             if(self.action[4] == True):
                 self.reset()
                 self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Georgia.smm", diff="Easy")
+		self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Georgia.smm", diff="Easy", net_efficacy=2)
                 source = pyg.resource.media(self.rg.music)
                 player.queue(source)
                 player.volume = 0.1
                 player.play()
-                self.start = True	
+                self.start = True
+	    if self.net_env is not None:
+                # Set up network player.
+		openai_config = {"env_object" : self.net_env,
+		"encoder" : {"spikes" : {"flip_flop" : 2, "max_spikes" : 8, "min" : 0, "max" : 0.5}},
+		"seed" : None, "encoder_interval" : 1, "decoder" : "wta",
+		"runtime" : 20, "episodes" : 10, "network_filename":"testmann",
+		"output_spike_counts_params":"", "proc_name":"gnp", "app_name":"ratmann",
+		"printing_params" : {"show_populations": False, "include_networks": True,
+		"show_input_counts": False, "show_output_counts": False, "show_output_times": False,
+		"show_suites": False, "no_show_epochs": True}, "app_vis": False, "app_config": {}}
+
+		self.neuro_app = OpenAIGymApp(openai_config)
+		self.network = self.neuro_app.read_network("ratmann_network.json")
+		self.timestep = 0
+		self.net_score = 0
+		self.net_observations = self.net_env.reset()
+		self.net_done = False
+
+		with open("config/gnp.json") as f:
+		    gnp_params = json.loads(f.read())
+
+		self.neuro_proc = gnp.Processor(gnp_params)
+		self.neuro_proc.load_network(self.network)
+
+		for i in range(self.neuro_app.n_outputs):
+		    self.neuro_proc.track_output(i)
         else:	
             #button stuff
             self.action = bf.read_button()
             if(self.action[0] == True):
                 press[0] = 1
+		bf.flash_led(bf.LED_P_R, True)
+		self.LEDcounter[0] = 100
             else:
                 press[0] = 0
             if(self.action[1] == True):
                 press[1] = 1
+		bf.flash_led(bf.LED_P_Y, True)
+		self.LEDcounter[1] = 100
             else:
                 press[1] = 0
             if(self.action[2] == True):
                 press[2] = 1
+		bf.flash_led(bf.LED_P_G, True)
+		self.LEDcounter[2] = 100
             else:
                 press[2] = 0
             if(self.action[3] == True):
                 press[3] = 1
+		bf.flash_led(bf.LED_P_B, True)
+		self.LEDcounter[3] = 100
             else:
                 press[3] = 0
             if(self.action[4] == True):
                 press[4] = 1
+		bf.flash_led(bf.LED_P_W, True)
+		self.LEDcounter[4] = 100
             else:
                 press[4] = 0
             
+	    t = time.time()
             action = sum(2**i for i, v in enumerate(reversed(self.action)) if v)
 
             self.state, self.reward, self.gameOver, info  = self.rg.step(action)
             self.score += self.reward
             self.action = [False for x in range(5)]
+
+	    self.net_actions = self.neuro_app.get_actions(self.neuro_proc, self.net_observations, self.timestep)
+	    self.timestep += 1
+
+	    if not self.neuro_app.box_action:
+		for i in range(len(self.net_actions)):
+		    self.net_actions[i] = int(self.net_actions[i])
+
+	    if len(self.net_actions) == 1:
+		self.net_observations, reward, self.net_done, info = self.net_env.step(self.net_actions[0])
+	    else:
+		self.net_observations, reward, self.net_done, info = self.net_env.step(self.net_actions)
+
+	    self.net_score += reward
+	    self.net_actions_array = [bool((self.net_env.saved_note >> i) & 1) for i in range(4, -1, -1)]
+
+	    if(self.net_actions_array[0] == True):
+		bf.flash_led(bf.LED_C_R, True)
+		self.LEDcounter[5] = 100
+	    if(self.net_actions_array[1] == True):
+		bf.flash_led(bf.LED_C_Y, True)
+		self.LEDcounter[6] = 100
+	    if(self.net_actions_array[2] == True):
+		bf.flash_led(bf.LED_C_G, True)
+		self.LEDcounter[7] = 100
+	    if(self.net_actions_array[3] == True):
+		bf.flash_led(bf.LED_C_B, True)
+		self.LEDcounter[8] = 100
+	    if(self.net_actions_array[4] == True):
+		bf.flash_led(bf.LED_C_W, True)
+		self.LEDcounter[9] = 100
 
             if(len(notes1) != 0):
                 for x in range(0, len(notes1)):
@@ -132,8 +212,42 @@ class GameState():
                     notes5.append(pyg.sprite.Sprite(note_image, x = cheese4, y = 350 - 1.66*(192 - self.rg.visible_note_distances[num]), batch=note_batch))
 
             self.scoreText.text = "Score: %d" % self.score
+	    self.netScoreText.text = "Neural Score: %d" % self.net_score
+
+	    self.LEDcounter[0] = self.LEDcounter[0] - 1
+	    if(self.LEDcounter[0] == 0):
+		bf.flash_led(bf.LED_P_R, False)			
+	    self.LEDcounter[1] = self.LEDcounter[1] - 1
+	    if(self.LEDcounter[1] == 0):
+		bf.flash_led(bf.LED_P_Y, False)			
+	    self.LEDcounter[2] = self.LEDcounter[2] - 1
+	    if(self.LEDcounter[2] == 0):
+		bf.flash_led(bf.LED_P_G, False)			
+	    self.LEDcounter[3] = self.LEDcounter[3] - 1
+	    if(self.LEDcounter[3] == 0):
+		bf.flash_led(bf.LED_P_B, False)			
+	    self.LEDcounter[4] = self.LEDcounter[4] - 1
+	    if(self.LEDcounter[4] == 0):
+		bf.flash_led(bf.LED_P_W, False)			
+	    self.LEDcounter[5] = self.LEDcounter[5] - 1
+	    if(self.LEDcounter[5] == 0):
+		bf.flash_led(bf.LED_C_R, False)			
+	    self.LEDcounter[6] = self.LEDcounter[6] - 1
+	    if(self.LEDcounter[6] == 0):
+		bf.flash_led(bf.LED_C_Y, False)			
+	    self.LEDcounter[7] = self.LEDcounter[7] - 1
+	    if(self.LEDcounter[7] == 0):
+		bf.flash_led(bf.LED_C_G, False)			
+	    self.LEDcounter[8] = self.LEDcounter[8] - 1
+	    if(self.LEDcounter[8] == 0):
+		bf.flash_led(bf.LED_C_B, False)			
+	    self.LEDcounter[9] = self.LEDcounter[9] - 1
+	    if(self.LEDcounter[9] == 0):
+		bf.flash_led(bf.LED_C_W, False)			
+
             if(self.gameOver == True):
                 self.start = False
+		self.net_env = None
 
     def reset(self):
         self.start = False
@@ -144,7 +258,8 @@ class GameState():
         self.blank_note = [False for x in range(5)]
         self.action = self.blank_note
         self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
-        self.counter = 1
+        self.netScoreText = pyg.text.Label('Neural Score: 0', font_name='HASTER',font_size=48, x=400, y=700)
+	self.LEDcounter = [0,0,0,0,0,0,0,0,0,0]
 
 pyg.resource.path = ['res','res/images','res/sounds','res/fonts']
 pyg.resource.reindex()

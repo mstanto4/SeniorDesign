@@ -116,12 +116,12 @@ class GameState():
 					self.neuro_proc.track_output(i)
 
 		else:	
+			t = time.time()
 			action = sum(2**i for i, v in enumerate(reversed(self.action)) if v)	
 
 			self.state, self.reward, self.gameOver, info = self.rg.step(action)
 			self.score += self.reward
 
-			t = time.time()
 			self.net_actions = self.neuro_app.get_actions(self.neuro_proc, self.net_observations, self.timestep)
 			self.timestep += 1
 
@@ -136,6 +136,8 @@ class GameState():
 				self.net_observations, reward, self.net_done, info = self.net_env.step(self.net_actions)
 
 			self.net_score += reward
+			self.net_actions_array = [bool((self.net_env.saved_note >> i) & 1) for i in range(4, -1, -1)]
+			# print("Total decision time:", time.time() - t)
 
 			self.action = [False for x in range(5)]
 			
@@ -169,6 +171,9 @@ class GameState():
 
 			self.scoreText.text = "Score: %d" % self.score
 			self.netScoreText.text = "Neural Score: %d" % self.net_score
+
+			# print("Total step time:", time.time() - t)
+
 			if(self.gameOver == True):
 				self.start = False
 				self.net_env = None
@@ -372,7 +377,7 @@ if __name__ == '__main__':
 	whiteTextSpice = pyg.sprite.Sprite(white_image, x = 200, y = 160)
 
 
-	pyg.clock.schedule_interval(update, 1/180.0)
+	pyg.clock.schedule_interval(update, 1/60.0)
 	pyg.app.run()
 
 	

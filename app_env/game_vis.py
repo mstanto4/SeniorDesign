@@ -32,11 +32,7 @@ class GameState():
 
     def update(self, dt):
         if(self.start == False):
-            if(self.counter % 100 == 0):
-                self.action = bf.read_button()
-                self.counter = 1
-            else:
-                self.counter = self.counter + 1
+            self.action = bf.read_button()
             if(self.action[0] == True):
                 self.reset()
                 self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Every.smm", diff="Easy")

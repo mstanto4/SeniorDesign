@@ -86,6 +86,10 @@ This section outlines potential future work to improve the firmware and hardware
  
 1. Update button read function to use interrupts. [This website](https://raspberrypi.stackexchange.com/questions/76667/debouncing-buttons-with-rpi-gpio-too-many-events-detected) outlines a potential solution.
 2. Update led flashes to utilize threads, thus removing the counter functionality (in the game vis code). [This website](https://www.geeksforgeeks.org/creating-child-process-using-fork-python/) gives a tutorial on a potential way to accomplish this.
+3. Update launcher.sh to properly run and display neural network visualizer (when visualizer complete)
+4. Update launcher.sh to resize and position windows
+	- Possible other solution: find another way to launch on startup where executable does
+	not need to be clicked at all
 
 ### Hardware and Housing Improvements
 

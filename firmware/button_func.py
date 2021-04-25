@@ -2,10 +2,12 @@
 Title: button_func.py
 Date: January 28, 2021
 Written by: Samantha Zimmermann 
-Description: Definition of LED and button GPIO pin constants. Contains setup function, which configures RPi GPIO pins; read_button, which returns
-a list of 1s and 0s corresponding to if a player button has been pressed and flashes the player button's LED for the configured amount of time; and flash_led, 
-which takes a list of 1s and 0s, and flashes the corresponding neural network player LED for the configured amount of time; and cleanup, which simply calls
-the GPIO cleanup function.
+Description: Definition of LED and button GPIO pin constants. Contains setup function, 
+which configures RPi GPIO pins; read_button, which returns a list of 1s and 0s corresponding 
+to if a player button has been pressed and flashes the player button's LED for the 
+configured amount of time; flash_led, which takes a pin number and a boolean, which 
+turns on or off the given pin with a true/false value respectively; and cleanup, which 
+simply calls the GPIO cleanup function.
 '''
 import RPi.GPIO as GPIO # Import RPi GPIO library
 from time import sleep  # Delay function
@@ -23,11 +25,11 @@ BUT_P_G = 23
 BUT_P_Y = 24
 BUT_P_R = 25
 
-LED_C_W = 5
-LED_C_B = 6
-LED_C_G = 13
-LED_C_Y = 19
-LED_C_R = 26
+LED_N_W = 5
+LED_N_B = 6
+LED_N_G = 13
+LED_N_Y = 19
+LED_N_R = 26
 
 # Button flash time (in seconds)
 FLASH_TIME = 0.05
@@ -56,11 +58,11 @@ def setup():
     GPIO.setup(BUT_P_R, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     # Neural network
-    GPIO.setup(LED_C_W, GPIO.OUT)
-    GPIO.setup(LED_C_B, GPIO.OUT)
-    GPIO.setup(LED_C_G, GPIO.OUT)
-    GPIO.setup(LED_C_Y, GPIO.OUT)
-    GPIO.setup(LED_C_R, GPIO.OUT)
+    GPIO.setup(LED_N_W, GPIO.OUT)
+    GPIO.setup(LED_N_B, GPIO.OUT)
+    GPIO.setup(LED_N_G, GPIO.OUT)
+    GPIO.setup(LED_N_Y, GPIO.OUT)
+    GPIO.setup(LED_N_R, GPIO.OUT)
 
 # Reads the status of the five input player buttons and returns the
 # result as a list of 1s and 0s. 1 means the button was pressed, 0

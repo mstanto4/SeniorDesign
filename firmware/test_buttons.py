@@ -29,6 +29,9 @@ elif sys.argv[1] == "led":
     try:
         while True:
             bf.flash_led([True, True, True, True, True])
+            sleep(200);
+            bf.flash_led([False, False, False, False, False])
+            sleep(200);
 
     except KeyboardInterrupt:
         bf.cleanup()

@@ -199,19 +199,19 @@ class GameState():
 #	    self.net_actions_array = [bool((self.net_env.saved_note >> i) & 1) for i in range(4, -1, -1)]
 
             if(self.net_actions_array[0] == True):
-                bf.flash_led(bf.LED_C_R, True)
+                bf.flash_led(bf.LED_N_R, True)
                 self.LEDcounter[5] = 10
             if(self.net_actions_array[1] == True):
-                bf.flash_led(bf.LED_C_Y, True)
+                bf.flash_led(bf.LED_N_Y, True)
                 self.LEDcounter[6] = 10
             if(self.net_actions_array[2] == True):
-                bf.flash_led(bf.LED_C_G, True)
+                bf.flash_led(bf.LED_N_G, True)
                 self.LEDcounter[7] = 10
             if(self.net_actions_array[3] == True):
-                bf.flash_led(bf.LED_C_B, True)
+                bf.flash_led(bf.LED_N_B, True)
                 self.LEDcounter[8] = 10
             if(self.net_actions_array[4] == True):
-                bf.flash_led(bf.LED_C_W, True)
+                bf.flash_led(bf.LED_N_W, True)
                 self.LEDcounter[9] = 10
 
             if(len(notes1) != 0):
@@ -262,19 +262,19 @@ class GameState():
                 bf.flash_led(bf.LED_P_W, False)			
             self.LEDcounter[5] = self.LEDcounter[5] - 1
             if(self.LEDcounter[5] == 0):
-                bf.flash_led(bf.LED_C_R, False)		    
+                bf.flash_led(bf.LED_N_R, False)		    
             self.LEDcounter[6] = self.LEDcounter[6] - 1
             if(self.LEDcounter[6] == 0):
-                bf.flash_led(bf.LED_C_Y, False)			
+                bf.flash_led(bf.LED_N_Y, False)			
             self.LEDcounter[7] = self.LEDcounter[7] - 1
             if(self.LEDcounter[7] == 0):
-                bf.flash_led(bf.LED_C_G, False)			
+                bf.flash_led(bf.LED_N_G, False)			
             self.LEDcounter[8] = self.LEDcounter[8] - 1
             if(self.LEDcounter[8] == 0):
-                bf.flash_led(bf.LED_C_B, False)			
+                bf.flash_led(bf.LED_N_B, False)			
             self.LEDcounter[9] = self.LEDcounter[9] - 1
             if(self.LEDcounter[9] == 0):
-                bf.flash_led(bf.LED_C_W, False)			
+                bf.flash_led(bf.LED_N_W, False)			
 
             if(self.gameOver == True):
                 self.start = False

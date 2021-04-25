@@ -32,11 +32,12 @@ class GameState():
         self.state = []
         self.blank_note = [False for x in range(5)]
         self.action = self.blank_note
+        self.net_actions_array = self.blank_note
         pyg.resource.add_font('Haster.ttf')
         haster = font.load('HASTER')
         self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
         self.netScoreText = pyg.text.Label('Neural Score: 0', font_name='HASTER',font_size=48, x=400, y=700)
-	self.LEDcounter = [0,0,0,0,0,0,0,0,0,0]
+        self.LEDcounter = [0,0,0,0,0,0,0,0,0,0]
 
     def update(self, dt):
         if(self.start == False):
@@ -45,7 +46,7 @@ class GameState():
                 self.reset()
                 self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Every.smm", diff="Easy")
  #               self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Every.smm", diff="Easy", net_efficacy=2)
-		source = pyg.resource.media(self.rg.music)
+                source = pyg.resource.media(self.rg.music)
                 player.queue(source)
                 player.volume = 0.1
                 player.play()
@@ -117,32 +118,32 @@ class GameState():
             self.action = bf.read_button()
             if(self.action[0] == True):
                 press[0] = 1
-		bf.flash_led(bf.LED_P_R, True)
-		self.LEDcounter[0] = 100
+                bf.flash_led(bf.LED_P_R, True)
+                self.LEDcounter[0] = 10
             else:
                 press[0] = 0
             if(self.action[1] == True):
                 press[1] = 1
-		bf.flash_led(bf.LED_P_Y, True)
-		self.LEDcounter[1] = 100
+                bf.flash_led(bf.LED_P_Y, True)
+                self.LEDcounter[1] = 10
             else:
                 press[1] = 0
             if(self.action[2] == True):
                 press[2] = 1
-		bf.flash_led(bf.LED_P_G, True)
-		self.LEDcounter[2] = 100
+                bf.flash_led(bf.LED_P_G, True)
+                self.LEDcounter[2] = 10
             else:
                 press[2] = 0
             if(self.action[3] == True):
                 press[3] = 1
-		bf.flash_led(bf.LED_P_B, True)
-		self.LEDcounter[3] = 100
+                bf.flash_led(bf.LED_P_B, True)
+                self.LEDcounter[3] = 10
             else:
                 press[3] = 0
             if(self.action[4] == True):
                 press[4] = 1
-		bf.flash_led(bf.LED_P_W, True)
-		self.LEDcounter[4] = 100
+                bf.flash_led(bf.LED_P_W, True)
+                self.LEDcounter[4] = 10
             else:
                 press[4] = 0
             
@@ -150,36 +151,37 @@ class GameState():
             action = sum(2**i for i, v in enumerate(reversed(self.action)) if v)
 
             self.state, self.reward, self.gameOver, info  = self.rg.step(action)
-            self.score += self.reward
+            if self.reward == -1:
+                self.score += self.reward
             self.action = [False for x in range(5)]
 
 	    ##### Comment out once neural network works #######
 	    ##################################################
-	    rand = random.randint(0,1)
-	    if(rand == 1):
-	    	self.net_actions_array[0] = True
-	    else:
-		self.net_actions_array[0] = False
-	    rand = random.randint(0,1)
-	    if(rand == 1):
-	    	self.net_actions_array[1] = True
-	    else:
-		self.net_actions_array[1] = False
-	    rand = random.randint(0,1)
-	    if(rand == 1):
-	    	self.net_actions_array[2] = True
-	    else:
-		self.net_actions_array[2] = False
-	    rand = random.randint(0,1)
-	    if(rand == 1):
-	    	self.net_actions_array[3] = True
-	    else:
-		self.net_actions_array[3] = False
-	    rand = random.randint(0,1)
-	    if(rand == 1):
-	    	self.net_actions_array[4] = True
-	    else:
-		self.net_actions_array[4] = False
+            rand = random.randint(0,250)
+            if(rand == 23):
+                self.net_actions_array[0] = True
+            else:
+                self.net_actions_array[0] = False
+            rand = random.randint(0,250)
+            if(rand == 17):
+                self.net_actions_array[1] = True
+            else:
+                self.net_actions_array[1] = False
+            rand = random.randint(0,250)
+            if(rand == 54):
+                self.net_actions_array[2] = True
+            else:
+                self.net_actions_array[2] = False
+            rand = random.randint(0,250)
+            if(rand == 91):
+                self.net_actions_array[3] = True
+            else:
+                self.net_actions_array[3] = False
+            rand = random.randint(0,250)
+            if(rand == 82):
+                self.net_actions_array[4] = True
+            else:
+                self.net_actions_array[4] = False
 
 #	    self.net_actions = self.neuro_app.get_actions(self.neuro_proc, self.net_observations, self.timestep)
 #	    self.timestep += 1
@@ -196,21 +198,21 @@ class GameState():
 #	    self.net_score += reward
 #	    self.net_actions_array = [bool((self.net_env.saved_note >> i) & 1) for i in range(4, -1, -1)]
 
-#	    if(self.net_actions_array[0] == True):
-#		bf.flash_led(bf.LED_C_R, True)
-#		self.LEDcounter[5] = 100
-#	    if(self.net_actions_array[1] == True):
-#		bf.flash_led(bf.LED_C_Y, True)
-#		self.LEDcounter[6] = 100
-#	    if(self.net_actions_array[2] == True):
-#		bf.flash_led(bf.LED_C_G, True)
-#		self.LEDcounter[7] = 100
-#	    if(self.net_actions_array[3] == True):
-#		bf.flash_led(bf.LED_C_B, True)
-#		self.LEDcounter[8] = 100
-#	    if(self.net_actions_array[4] == True):
-#		bf.flash_led(bf.LED_C_W, True)
-#		self.LEDcounter[9] = 100
+            if(self.net_actions_array[0] == True):
+                bf.flash_led(bf.LED_C_R, True)
+                self.LEDcounter[5] = 10
+            if(self.net_actions_array[1] == True):
+                bf.flash_led(bf.LED_C_Y, True)
+                self.LEDcounter[6] = 10
+            if(self.net_actions_array[2] == True):
+                bf.flash_led(bf.LED_C_G, True)
+                self.LEDcounter[7] = 10
+            if(self.net_actions_array[3] == True):
+                bf.flash_led(bf.LED_C_B, True)
+                self.LEDcounter[8] = 10
+            if(self.net_actions_array[4] == True):
+                bf.flash_led(bf.LED_C_W, True)
+                self.LEDcounter[9] = 10
 
             if(len(notes1) != 0):
                 for x in range(0, len(notes1)):
@@ -243,36 +245,36 @@ class GameState():
             self.scoreText.text = "Score: %d" % self.score
 #	    self.netScoreText.text = "Neural Score: %d" % self.net_score
 
-	    self.LEDcounter[0] = self.LEDcounter[0] - 1
-	    if(self.LEDcounter[0] == 0):
-		bf.flash_led(bf.LED_P_R, False)			
-	    self.LEDcounter[1] = self.LEDcounter[1] - 1
-	    if(self.LEDcounter[1] == 0):
-		bf.flash_led(bf.LED_P_Y, False)			
-	    self.LEDcounter[2] = self.LEDcounter[2] - 1
-	    if(self.LEDcounter[2] == 0):
-		bf.flash_led(bf.LED_P_G, False)			
-	    self.LEDcounter[3] = self.LEDcounter[3] - 1
-	    if(self.LEDcounter[3] == 0):
-		bf.flash_led(bf.LED_P_B, False)			
-	    self.LEDcounter[4] = self.LEDcounter[4] - 1
-	    if(self.LEDcounter[4] == 0):
-		bf.flash_led(bf.LED_P_W, False)			
-	    self.LEDcounter[5] = self.LEDcounter[5] - 1
-	    if(self.LEDcounter[5] == 0):
-		bf.flash_led(bf.LED_C_R, False)			
-	    self.LEDcounter[6] = self.LEDcounter[6] - 1
-	    if(self.LEDcounter[6] == 0):
-		bf.flash_led(bf.LED_C_Y, False)			
-	    self.LEDcounter[7] = self.LEDcounter[7] - 1
-	    if(self.LEDcounter[7] == 0):
-		bf.flash_led(bf.LED_C_G, False)			
-	    self.LEDcounter[8] = self.LEDcounter[8] - 1
-	    if(self.LEDcounter[8] == 0):
-		bf.flash_led(bf.LED_C_B, False)			
-	    self.LEDcounter[9] = self.LEDcounter[9] - 1
-	    if(self.LEDcounter[9] == 0):
-		bf.flash_led(bf.LED_C_W, False)			
+            self.LEDcounter[0] = self.LEDcounter[0] - 1
+            if(self.LEDcounter[0] == 0):
+                bf.flash_led(bf.LED_P_R, False)
+            self.LEDcounter[1] = self.LEDcounter[1] - 1
+            if(self.LEDcounter[1] == 0):
+                bf.flash_led(bf.LED_P_Y, False)		    
+            self.LEDcounter[2] = self.LEDcounter[2] - 1
+            if(self.LEDcounter[2] == 0):
+                bf.flash_led(bf.LED_P_G, False)			
+            self.LEDcounter[3] = self.LEDcounter[3] - 1
+            if(self.LEDcounter[3] == 0):
+                bf.flash_led(bf.LED_P_B, False)			
+            self.LEDcounter[4] = self.LEDcounter[4] - 1
+            if(self.LEDcounter[4] == 0):
+                bf.flash_led(bf.LED_P_W, False)			
+            self.LEDcounter[5] = self.LEDcounter[5] - 1
+            if(self.LEDcounter[5] == 0):
+                bf.flash_led(bf.LED_C_R, False)		    
+            self.LEDcounter[6] = self.LEDcounter[6] - 1
+            if(self.LEDcounter[6] == 0):
+                bf.flash_led(bf.LED_C_Y, False)			
+            self.LEDcounter[7] = self.LEDcounter[7] - 1
+            if(self.LEDcounter[7] == 0):
+                bf.flash_led(bf.LED_C_G, False)			
+            self.LEDcounter[8] = self.LEDcounter[8] - 1
+            if(self.LEDcounter[8] == 0):
+                bf.flash_led(bf.LED_C_B, False)			
+            self.LEDcounter[9] = self.LEDcounter[9] - 1
+            if(self.LEDcounter[9] == 0):
+                bf.flash_led(bf.LED_C_W, False)			
 
             if(self.gameOver == True):
                 self.start = False
@@ -286,9 +288,10 @@ class GameState():
         self.state = []
         self.blank_note = [False for x in range(5)]
         self.action = self.blank_note
+        self.net_actions_array = self.blank_note
         self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
         self.netScoreText = pyg.text.Label('Neural Score: 0', font_name='HASTER',font_size=48, x=400, y=700)
-	self.LEDcounter = [0,0,0,0,0,0,0,0,0,0]
+        self.LEDcounter = [0,0,0,0,0,0,0,0,0,0]
 
 pyg.resource.path = ['res','res/images','res/sounds','res/fonts']
 pyg.resource.reindex()

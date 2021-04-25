@@ -15,6 +15,7 @@ import numpy as np
 import pyglet as pyg
 from pyglet.window import key
 from pyglet import font
+import random
 #from eons_wrap_env import EONSWrapperEnv
 #from utils.openai_gym import *
 #import gnp
@@ -152,6 +153,34 @@ class GameState():
             self.score += self.reward
             self.action = [False for x in range(5)]
 
+	    ##### Comment out once neural network works #######
+	    ##################################################
+	    rand = random.randint(0,1)
+	    if(rand == 1):
+	    	self.net_actions_array[0] = True
+	    else:
+		self.net_actions_array[0] = False
+	    rand = random.randint(0,1)
+	    if(rand == 1):
+	    	self.net_actions_array[1] = True
+	    else:
+		self.net_actions_array[1] = False
+	    rand = random.randint(0,1)
+	    if(rand == 1):
+	    	self.net_actions_array[2] = True
+	    else:
+		self.net_actions_array[2] = False
+	    rand = random.randint(0,1)
+	    if(rand == 1):
+	    	self.net_actions_array[3] = True
+	    else:
+		self.net_actions_array[3] = False
+	    rand = random.randint(0,1)
+	    if(rand == 1):
+	    	self.net_actions_array[4] = True
+	    else:
+		self.net_actions_array[4] = False
+
 #	    self.net_actions = self.neuro_app.get_actions(self.neuro_proc, self.net_observations, self.timestep)
 #	    self.timestep += 1
 
@@ -229,21 +258,21 @@ class GameState():
 	    self.LEDcounter[4] = self.LEDcounter[4] - 1
 	    if(self.LEDcounter[4] == 0):
 		bf.flash_led(bf.LED_P_W, False)			
-#	    self.LEDcounter[5] = self.LEDcounter[5] - 1
-#	    if(self.LEDcounter[5] == 0):
-#		bf.flash_led(bf.LED_C_R, False)			
-#	    self.LEDcounter[6] = self.LEDcounter[6] - 1
-#	    if(self.LEDcounter[6] == 0):
-#		bf.flash_led(bf.LED_C_Y, False)			
-#	    self.LEDcounter[7] = self.LEDcounter[7] - 1
-#	    if(self.LEDcounter[7] == 0):
-#		bf.flash_led(bf.LED_C_G, False)			
-#	    self.LEDcounter[8] = self.LEDcounter[8] - 1
-#	    if(self.LEDcounter[8] == 0):
-#		bf.flash_led(bf.LED_C_B, False)			
-#	    self.LEDcounter[9] = self.LEDcounter[9] - 1
-#	    if(self.LEDcounter[9] == 0):
-#		bf.flash_led(bf.LED_C_W, False)			
+	    self.LEDcounter[5] = self.LEDcounter[5] - 1
+	    if(self.LEDcounter[5] == 0):
+		bf.flash_led(bf.LED_C_R, False)			
+	    self.LEDcounter[6] = self.LEDcounter[6] - 1
+	    if(self.LEDcounter[6] == 0):
+		bf.flash_led(bf.LED_C_Y, False)			
+	    self.LEDcounter[7] = self.LEDcounter[7] - 1
+	    if(self.LEDcounter[7] == 0):
+		bf.flash_led(bf.LED_C_G, False)			
+	    self.LEDcounter[8] = self.LEDcounter[8] - 1
+	    if(self.LEDcounter[8] == 0):
+		bf.flash_led(bf.LED_C_B, False)			
+	    self.LEDcounter[9] = self.LEDcounter[9] - 1
+	    if(self.LEDcounter[9] == 0):
+		bf.flash_led(bf.LED_C_W, False)			
 
             if(self.gameOver == True):
                 self.start = False

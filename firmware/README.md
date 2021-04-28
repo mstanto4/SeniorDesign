@@ -4,6 +4,8 @@ The code in this folder is a library that essentially connects the software to t
 
 This part of the readme will also describe the physical hardware setup and connections.
 
+For additional documentation, including complete parts lists, budgets, the final poster and presentation for this project, as well as file versions of all the images on this page, please see the Documents folder.
+
 
 ## Files
 
@@ -55,11 +57,11 @@ Argument "button" or "led" specifies whether function "read button" or "flash le
 ### Pinouts
 For this project, we used the RPi GPIO library. We are using the BCM naming scheme. The pin numbers are as follows:
 
-![Official RPi pinout](pi4.png)
+![Official RPi pinout](documents/pi4.png)
 
 The pinout as used for the arcade machine is as follows:
 
-![Pinout used in the arcade box](pinout.png)
+![Pinout used in the arcade box](documents/pinout.png)
 
 ## Hardware
 
@@ -67,16 +69,26 @@ The pinout as used for the arcade machine is as follows:
 
 The following photos illustrate the housing:
 
-![Housing front view](front.jpg)
-![Housing side view](side.jpg)
-![Housing back view](back.jpg)
+![Housing front view](documents/front.jpg)
+![Housing side view](documents/side.jpg)
+![Housing back view](documents/back.jpg)
 
 The lefthand screen is meant to display the game. The righthand screen is meant to display the neural network visualizer.
 
 The lefthand buttons are the player buttons, which activate when pressed. The righthand buttons are the neural network buttons which only the LEDs are used and are activated as the network plays the game.
 
+Please see the PDF files Laser Cut Sizing and Mechanical Dimensions in the Documents folders for specific dimensions and cutting guides for the housing.
+
 ### Wiring diagram
 
+
+![Wiring diagram](documents/Wiring-Diagram.png)
+
+### Parts Lists
+
+![Housing back view with annotated parts](documents/Parts-Annotated.png)
+
+Please see the Mechanical and Electrical budget lists in the Documents folder for a comprehensive list of parts.
 
 ## Future Work
 

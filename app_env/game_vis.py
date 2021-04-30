@@ -1,3 +1,11 @@
+############################################
+#	Title: game_vis.py
+#	Date: April 28, 2021
+#	Written by: Megan Stanton 
+#	Description: Visualizer for guitar hero based game, neural network code complete but does
+#	not work on the Raspberry Pi. Uncomment any commented out code for neural network to work.
+############################################
+
 #for including gym / probably wont need or will need to change on pi
 import sys
 sys.path.append('/usr/local/lib/python3.9/site-packages')
@@ -9,12 +17,17 @@ cheese2 = 450
 cheese3 = 580
 cheese4 = 725
 
+#our files
 import button_func as bf
 import rhythm_game_env
+
 import numpy as np
+
 import pyglet as pyg
 from pyglet.window import key
 from pyglet import font
+
+#once neural network functions, will not need random
 import random
 #from eons_wrap_env import EONSWrapperEnv
 #from utils.openai_gym import *
@@ -23,6 +36,7 @@ import random
 #import json
 #import neuro
 
+#saves important values for the current state of the game, and contains the update function that is continuously called at certain intervals
 class GameState():
     def __init__(self):	
         self.start = False
@@ -33,16 +47,24 @@ class GameState():
         self.blank_note = [False for x in range(5)]
         self.action = self.blank_note
         self.net_actions_array = self.blank_note
+	
+	#set up score labels
         pyg.resource.add_font('Haster.ttf')
         haster = font.load('HASTER')
         self.scoreText = pyg.text.Label('Score: 0', font_name='HASTER',font_size=48, x=775, y=700)
         self.netScoreText = pyg.text.Label('Neural Score: 0', font_name='HASTER',font_size=48, x=400, y=700)
-        self.LEDcounter = [0,0,0,0,0,0,0,0,0,0]
+        
+	#used to light up the LEDs in the buttons
+	self.LEDcounter = [0,0,0,0,0,0,0,0,0,0]
 
     def update(self, dt):
+	#if a song has not been chosen yet
         if(self.start == False):
+	    #determine if a button has been pressed
             self.action = bf.read_button()
+	    #determine which button was pressed if it was
             if(self.action[0] == True):
+		#set up initial values for the game
                 self.reset()
                 self.rg = rhythm_game_env.RhythmGameEnv(song_file="res/smmFiles/Every.smm", diff="Easy")
  #               self.net_env = EONSWrapperEnv(song_file="res/smmFiles/Every.smm", diff="Easy", net_efficacy=2)
@@ -118,6 +140,7 @@ class GameState():
             self.action = bf.read_button()
             if(self.action[0] == True):
                 press[0] = 1
+		#turn LED on and reset counter (LED is turned off when counter reaches 0)
                 bf.flash_led(bf.LED_P_R, True)
                 self.LEDcounter[0] = 10
             else:
@@ -148,13 +171,17 @@ class GameState():
                 press[4] = 0
             
 #	    t = time.time()
+	   #convert action from an array of 5 boolean values to an integer
             action = sum(2**i for i, v in enumerate(reversed(self.action)) if v)
 
+	    #do no allow negative score to be added to player (may be taken out if game becomes easier)
+	    #move game status forward based on step function
             self.state, self.reward, self.gameOver, info  = self.rg.step(action)
             if self.reward != -1:
                 self.score += self.reward
             self.action = [False for x in range(5)]
 
+	    ###################################################
 	    ##### Comment out once neural network works #######
 	    ##################################################
             rand = random.randint(0,250)
@@ -198,6 +225,7 @@ class GameState():
 #	    self.net_score += reward
 #	    self.net_actions_array = [bool((self.net_env.saved_note >> i) & 1) for i in range(4, -1, -1)]
 
+	    #turn on LEDs for neural network if needed
             if(self.net_actions_array[0] == True):
                 bf.flash_led(bf.LED_N_R, True)
                 self.LEDcounter[5] = 10
@@ -214,6 +242,7 @@ class GameState():
                 bf.flash_led(bf.LED_N_W, True)
                 self.LEDcounter[9] = 10
 
+	    #deletes the notes that were previously on the screen
             if(len(notes1) != 0):
                 for x in range(0, len(notes1)):
                     del notes1[0];
@@ -230,6 +259,7 @@ class GameState():
                 for x in range(0, len(notes5)):
                     del notes5[0];
 
+	    #calculate where the new notes need to be placed
             for num, note in enumerate(self.rg.visible_notes):
                 if(note[0] == True):
                     notes1.append(pyg.sprite.Sprite(note_image, x = cheese0, y = 350 - 1.66*(192 - self.rg.visible_note_distances[num]), batch=note_batch))
@@ -242,9 +272,11 @@ class GameState():
                 if(note[4] == True):
                     notes5.append(pyg.sprite.Sprite(note_image, x = cheese4, y = 350 - 1.66*(192 - self.rg.visible_note_distances[num]), batch=note_batch))
 
+	    #update score text
             self.scoreText.text = "Score: %d" % self.score
 #	    self.netScoreText.text = "Neural Score: %d" % self.net_score
 
+	    #turn off LEDs if needed
             self.LEDcounter[0] = self.LEDcounter[0] - 1
             if(self.LEDcounter[0] == 0):
                 bf.flash_led(bf.LED_P_R, False)
@@ -276,10 +308,12 @@ class GameState():
             if(self.LEDcounter[9] == 0):
                 bf.flash_led(bf.LED_N_W, False)			
 
+	    #end game if it is over
             if(self.gameOver == True):
                 self.start = False
 #		self.net_env = None
 
+    #reset game to default values
     def reset(self):
         self.start = False
         self.gameOver = False
@@ -293,10 +327,11 @@ class GameState():
         self.netScoreText = pyg.text.Label('Neural Score: 0', font_name='HASTER',font_size=48, x=400, y=700)
         self.LEDcounter = [0,0,0,0,0,0,0,0,0,0]
 
+#set up path to include needed resources
 pyg.resource.path = ['res','res/images','res/sounds','res/fonts']
 pyg.resource.reindex()
 
-#image height = 768 width = 1024
+#set image for the window
 image = pyg.resource.image('BackgroundFinal.png')
 window = pyg.window.Window(width = image.width, height = image.height)
 
@@ -306,6 +341,7 @@ pyg.options['audio'] = ('openal', 'pulse', 'directsound', 'silent')
 def update(dt):
     game_state.update(dt)
 
+#updates the screen and draws all needed objects and text
 @window.event
 def on_draw():
     window.clear()
@@ -367,10 +403,12 @@ def on_draw():
             star3.draw()
 
 
+#setup game
 if __name__ == '__main__':
 #setup buttons
     bf.setup()
 
+    #initialize game state and setup music
     game_state = GameState()
     player = pyg.media.Player()
 
@@ -378,6 +416,7 @@ if __name__ == '__main__':
     pyg.resource.reindex()
     #note height = 70 width = 94
 
+    #set up note arrays
     note_image = pyg.resource.image('testNote.png')
     note_batch = pyg.graphics.Batch()
     notes1 = []
@@ -386,12 +425,15 @@ if __name__ == '__main__':
     notes4 = []
     notes5 = []
 
+    #used in keyboard version
     keys = {}
     keys['z'] = False
     keys['x'] = False
     keys['c'] = False
     keys['v'] = False
     keys['b'] = False	
+
+    #create images for buttons that display when pressed
     yellow_image = pyg.resource.image('yellow.png')
     blue_image = pyg.resource.image('blue.png')
     green_image = pyg.resource.image('green.png')
@@ -404,6 +446,7 @@ if __name__ == '__main__':
     press4 = pyg.sprite.Sprite(blue_image, x = cheese3, y = 24)
     press5 = pyg.sprite.Sprite(white_image, x = cheese4, y = 24)
 
+    #create transparent images that are always displayed
     yellow_image_trans = pyg.resource.image('yellowT.png')
     blue_image_trans = pyg.resource.image('blueT.png')
     green_image_trans = pyg.resource.image('greenT.png')
@@ -415,6 +458,7 @@ if __name__ == '__main__':
     pressT4 = pyg.sprite.Sprite(blue_image_trans, x = cheese3, y = 24)
     pressT5 = pyg.sprite.Sprite(white_image_trans, x = cheese4, y = 24)
 
+    #setup location of stars to be rewarded to player at the end of the song
     star_image = pyg.resource.image('star.png')
     star1 = pyg.sprite.Sprite(star_image, x = 350, y = 685)
     star2 = pyg.sprite.Sprite(star_image, x = 450, y = 685)
@@ -423,26 +467,26 @@ if __name__ == '__main__':
     starT2 = pyg.sprite.Sprite(star_image_trans, x = 450, y = 685)
     starT3 = pyg.sprite.Sprite(star_image_trans, x = 550, y = 685)
 
+    #setup menu
     popUp = pyg.resource.image('PopUp2.png')
     pop = pyg.sprite.Sprite(popUp, x = 25, y = 5)
-
     redText = pyg.text.Label('Press          to play "Everytime I Touch"', font_name='HASTER',font_size=35, x=120, y=600)
     yellowText = pyg.text.Label('Press          to play "Holding Out For A Hero"', font_name='HASTER',font_size=35, x=120, y=500) 
     greenText = pyg.text.Label('Press          to play "Bohemian Rhapsody"', font_name='HASTER',font_size=35, x=120, y=400)
     blueText = pyg.text.Label('Press          to play "I\'ll Make A Man Out Of You"', font_name='HASTER',font_size=35, x=120, y=300)
     whiteText = pyg.text.Label('Press          to play "The Devil Went Down To Georgia"', font_name='HASTER',font_size=35, x=120, y=200)
-
     RATMANN = pyg.text.Label('RAT MANN',color = [253,150,50,255], font_name = 'HASTER', font_size = 72, x = 10, y = 685)
-
     redTextSpice = pyg.sprite.Sprite(red_image, x = 200, y = 560)
     yellowTextSpice = pyg.sprite.Sprite(yellow_image, x = 200, y = 460)
     greenTextSpice = pyg.sprite.Sprite(green_image, x = 200, y = 360)
     blueTextSpice = pyg.sprite.Sprite(blue_image, x = 200, y = 260)
     whiteTextSpice = pyg.sprite.Sprite(white_image, x = 200, y = 160)
 
-
+    #run the game and make sure that it is updated at a certain interval
     pyg.clock.schedule_interval(update, 1/180.0)
     pyg.app.run()
+
+    #clear out button logic
     bf.cleanup()
 
 
